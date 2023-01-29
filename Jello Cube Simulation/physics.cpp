@@ -7,14 +7,53 @@
 
 #include "jello.h"
 #include "physics.h"
+#include "helper.h"
 
-/* Computes acceleration to every control point of the jello cube,
+/* Computes acceleration to every control Vector3d of the jello cube,
    which is in state given by 'jello'.
    Returns result in array 'a'. */
-void computeAcceleration(struct world* jello, struct point a[8][8][8])
+void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 {
-	/* for you to implement ... */
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+				a[i][j][k] = Vector3d(0, 0, 0);
+			}
 
+	//// create spring
+	//vector<Spring> springs;
+	//springs = createSprings();
+	//cout << "Generate " << springs.size() << " springs." << endl;
+
+	//double hook = jello->kElastic;
+	//double damp = jello->dElastic;
+	//for (const auto& spring : springs)
+	//{
+	//	Vector3d springF, dampF;
+	//	// add spring force
+	//	double R = spring.rest;
+	//	int xa = spring.x1, ya = spring.y1, za = spring.z1;
+	//	int xb = spring.x2, yb = spring.y2, zb = spring.z2;
+	//	Vector3d vecL = (jello->p[xa][ya][za] - jello->p[xb][yb][zb]);
+	//	double L = vecL.length();
+	//	springF = -hook * (L - R) * (vecL / L);
+	//	a[xa][ya][za] += springF;
+	//	a[xb][yb][zb] += -springF;
+	//	// add damping force
+	//	Vector3d vecVa = jello->v[xa][ya][za], vecVb = jello->v[xb][yb][zb];
+	//	dampF = -damp * dot(vecVa - vecVb, vecL) / L * (vecL / L);
+	//	a[xa][ya][za] += dampF;
+	//	a[xb][yb][zb] += -dampF;
+	//}
+	//
+	//// compute acceleration for every control point 
+	//for (int i = 0; i < 8; ++i)
+	//	for (int j = 0; j < 8; ++j)
+	//		for (int k = 0; k < 8; ++k)
+	//		{
+	//			a[i][j][k] /= jello->mass;
+	//		}	
 }
 
 /* performs one step of Euler Integration */
@@ -22,7 +61,7 @@ void computeAcceleration(struct world* jello, struct point a[8][8][8])
 void Euler(struct world* jello)
 {
 	int i, j, k;
-	point a[8][8][8];
+	Vector3d a[8][8][8];
 
 	computeAcceleration(jello, a);
 
@@ -44,12 +83,12 @@ void Euler(struct world* jello)
 /* as a result, updates the jello structure */
 void RK4(struct world* jello)
 {
-	point F1p[8][8][8], F1v[8][8][8],
+	Vector3d F1p[8][8][8], F1v[8][8][8],
 		F2p[8][8][8], F2v[8][8][8],
 		F3p[8][8][8], F3v[8][8][8],
 		F4p[8][8][8], F4v[8][8][8];
 
-	point a[8][8][8];
+	Vector3d a[8][8][8];
 
 
 	struct world buffer;

@@ -10,6 +10,7 @@
 
 #include "openGL-headers.h"
 #include "pic.h"
+#include "helper.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -30,13 +31,6 @@ extern int sprite;
 extern int g_vMousePos[2];
 extern int g_iLeftMouseButton, g_iMiddleMouseButton, g_iRightMouseButton;
 
-struct point
-{
-	double x;
-	double y;
-	double z;
-};
-
 // these variables control what is displayed on the screen
 extern int shear, bend, structural, pause, viewingMode, saveScreenToFile;
 
@@ -49,26 +43,26 @@ struct world
 	double dElastic; // Damping coefficient for all springs except collision springs
 	double kCollision; // Hook's elasticity coefficient for collision springs
 	double dCollision; // Damping coefficient collision springs
-	double mass; // mass of each of the 512 control points, mass assumed to be equal for every control point
+	double mass; // mass of each of the 512 control points, mass assumed to be equal for every control Vector3d
 	int incPlanePresent; // Is the inclined plane present? 1 = YES, 0 = NO (always NO in this assignment)
 	double a, b, c, d; // inclined plane has equation a * x + b * y + c * z + d = 0; if no inclined plane, these four fields are not used
 	int resolution; // resolution for the 3d grid specifying the external force field; value of 0 means that there is no force field
-	struct point* forceField; // pointer to the array of values of the force field
-	struct point p[8][8][8]; // position of the 512 control points
-	struct point v[8][8][8]; // velocities of the 512 control points
+	struct Vector3d* forceField; // pointer to the array of values of the force field
+	struct Vector3d p[8][8][8]; // position of the 512 control points
+	struct Vector3d v[8][8][8]; // velocities of the 512 control points
 };
 
 extern struct world jello;
 
 // computes crossproduct of three vectors, which are given as points
-// struct point vector1, vector2, dest
+// struct Vector3d vector1, vector2, dest
 // result goes into dest
 #define CROSSPRODUCTp(vector1,vector2,dest)\
   CROSSPRODUCT( (vector1).x, (vector1).y, (vector1).z,\
                 (vector2).x, (vector2).y, (vector2).z,\
                 (dest).x, (dest).y, (dest).z )
 
-// computes crossproduct of three vectors, which are specified by floating-point coordinates
+// computes crossproduct of three vectors, which are specified by floating-Vector3d coordinates
 // double x1,y1,z1,x2,y2,z2,x,y,z
 // result goes into x,y,z
 #define CROSSPRODUCT(x1,y1,z1,x2,y2,z2,x,y,z)\
@@ -78,7 +72,7 @@ extern struct world jello;
   z = (x1) * (y2) - (x2) * (y1)
 
 // normalizes vector dest
-// struct point dest
+// struct Vector3d dest
 // result returned in dest
 // must declare a double variable called 'length' somewhere inside the scope of the NORMALIZE macrp
 // macro will change that variable
@@ -90,15 +84,15 @@ extern struct world jello;
   (dest).z /= length;
 
 // copies vector source to vector dest
-// struct point source,dest
+// struct Vector3d source,dest
 #define pCPY(source,dest)\
 \
   (dest).x = (source).x;\
   (dest).y = (source).y;\
   (dest).z = (source).z;
 
-// assigns values x,y,z to point vector dest
-// struct point dest
+// assigns values x,y,z to Vector3d vector dest
+// struct Vector3d dest
 // double x,y,z
 #define pMAKE(x,y,z,dest)\
 \
@@ -107,7 +101,7 @@ extern struct world jello;
   (dest).(z) = (z);
 
 // sums points src1 and src2 to dest
-// struct point src1,src2,dest
+// struct Vector3d src1,src2,dest
 #define pSUM(src1,src2,dest)\
 \
   (dest).x = (src1).x + (src2).x;\
@@ -115,15 +109,15 @@ extern struct world jello;
   (dest).z = (src1).z + (src2).z;
 
 // dest = src2 - src1
-// struct point src1,src2,dest
+// struct Vector3d src1,src2,dest
 #define pDIFFERENCE(src1,src2,dest)\
 \
   (dest).x = (src1).x - (src2).x;\
   (dest).y = (src1).y - (src2).y;\
   (dest).z = (src1).z - (src2).z;
 
-// mulitplies components of point src by scalar and returns the result in dest
-// struct point src,dest
+// mulitplies components of Vector3d src by scalar and returns the result in dest
+// struct Vector3d src,dest
 // double scalar
 #define pMULTIPLY(src,scalar,dest)\
 \

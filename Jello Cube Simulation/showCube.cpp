@@ -40,10 +40,10 @@ int pointMap(int side, int i, int j)
 void showCube(struct world* jello)
 {
 	int i, j, k, ip, jp, kp;
-	point r1, r2, r3; // aux variables
+	Vector3d r1, r2, r3; // aux variables
 
 	/* normals buffer and counter for Gourad shading*/
-	struct point normal[8][8];
+	struct Vector3d normal[8][8];
 	int counter[8][8];
 
 	int face;
@@ -52,11 +52,11 @@ void showCube(struct world* jello)
 	if (fabs(jello->p[0][0][0].x) > 10)
 	{
 		printf("Your cube somehow escaped way out of the box.\n");
-		exit(0);
+		//exit(0);
 	}
 
 
-#define NODE(face,i,j) (*((struct point * )(jello->p) + pointMap((face),(i),(j))))
+#define NODE(face,i,j) (*((struct Vector3d * )(jello->p) + pointMap((face),(i),(j))))
 
 
 #define PROCESS_NEIGHBOUR(di,dj,dk) \
@@ -83,10 +83,10 @@ void showCube(struct world* jello)
 			for (j = 0; j <= 7; j++)
 				for (k = 0; k <= 7; k++)
 				{
-					if (i * j * k * (7 - i) * (7 - j) * (7 - k) != 0) // not surface point
+					if (i * j * k * (7 - i) * (7 - j) * (7 - k) != 0) // not surface Vector3d
 						continue;
 
-					glBegin(GL_POINTS); // draw point
+					glBegin(GL_POINTS); // draw Vector3d
 					glColor4f(0, 0, 0, 0);
 					glVertex3f(jello->p[i][j][k].x, jello->p[i][j][k].y, jello->p[i][j][k].z);
 					glEnd();

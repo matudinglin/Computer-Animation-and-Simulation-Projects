@@ -49,7 +49,7 @@ void mouseMotionDrag(int x, int y)
 		if (Phi < 0)
 			Phi += 2 * pi;
 
-		if (Theta > pi / 2 - 0.01) // dont let the point enter the north pole
+		if (Theta > pi / 2 - 0.01) // dont let the Vector3d enter the north pole
 			Theta = pi / 2 - 0.01;
 
 		if (Theta < -pi / 2 + 0.01)
@@ -163,7 +163,7 @@ void readWorld(char* fileName, struct world* jello)
 	  (the other steps will only be used for internal calculation)
 
 	  Example: 0.001 5
-	  Now, timestep equals 0.001. Every fifth time point will actually be drawn,
+	  Now, timestep equals 0.001. Every fifth time Vector3d will actually be drawn,
 	  i.e. frame1 <--> t = 0
 	  frame2 <--> t = 0.005
 	  frame3 <--> t = 0.010
@@ -195,14 +195,14 @@ void readWorld(char* fileName, struct world* jello)
 		1
 		0.31 -0.78 0.5 5.39
 
-	  Next is the forceField block, first with the resolution and then the data, one point per row.
+	  Next is the forceField block, first with the resolution and then the data, one Vector3d per row.
 	  Example:
 		30
 		<here 30 * 30 * 30 = 27 000 lines follow, each containing 3 real numbers>
 
-	  After this, there should be 1024 lines, each containing three floating-point numbers.
-	  The first 512 lines correspond to initial point locations.
-	  The last 512 lines correspond to initial point velocities.
+	  After this, there should be 1024 lines, each containing three floating-Vector3d numbers.
+	  The first 512 lines correspond to initial Vector3d locations.
+	  The last 512 lines correspond to initial Vector3d velocities.
 
 	  There should no blank lines anywhere in the file.
 
@@ -229,7 +229,7 @@ void readWorld(char* fileName, struct world* jello)
 	/* read info about the force field */
 	fscanf(file, "%d\n", &jello->resolution);
 	jello->forceField =
-		(struct point*)malloc(jello->resolution * jello->resolution * jello->resolution * sizeof(struct point));
+		(struct Vector3d*)malloc(jello->resolution * jello->resolution * jello->resolution * sizeof(struct Vector3d));
 	if (jello->resolution != 0)
 		for (i = 0; i <= jello->resolution - 1; i++)
 			for (j = 0; j <= jello->resolution - 1; j++)
@@ -240,7 +240,7 @@ void readWorld(char* fileName, struct world* jello)
 						&jello->forceField[i * jello->resolution * jello->resolution + j * jello->resolution + k].z);
 
 
-	/* read initial point positions */
+	/* read initial Vector3d positions */
 	for (i = 0; i <= 7; i++)
 	{
 		for (j = 0; j <= 7; j++)
@@ -251,7 +251,7 @@ void readWorld(char* fileName, struct world* jello)
 		}
 	}
 
-	/* read initial point velocities */
+	/* read initial Vector3d velocities */
 	for (i = 0; i <= 7; i++)
 	{
 		for (j = 0; j <= 7; j++)
@@ -315,7 +315,7 @@ void writeWorld(char* fileName, struct world* jello)
 
 
 
-	/* write initial point positions */
+	/* write initial Vector3d positions */
 	for (i = 0; i <= 7; i++)
 	{
 		for (j = 0; j <= 7; j++)
@@ -326,7 +326,7 @@ void writeWorld(char* fileName, struct world* jello)
 		}
 	}
 
-	/* write initial point velocities */
+	/* write initial Vector3d velocities */
 	for (i = 0; i <= 7; i++)
 	{
 		for (j = 0; j <= 7; j++)

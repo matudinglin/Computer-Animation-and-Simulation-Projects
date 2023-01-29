@@ -218,6 +218,15 @@ void doIdle()
 	if (pause == 0)
 	{
 		// insert code which appropriately performs one step of the cube simulation:
+		if (strcmp(jello.integrator, "RK4") == 0)
+			RK4(&jello);
+		else if (strcmp(jello.integrator, "Euler") == 0)
+			Euler(&jello);
+		else
+		{
+			printf("Wrong integrator!\n");
+			//exit(0);
+		}
 	}
 
 	glutPostRedisplay();
@@ -229,7 +238,7 @@ int main(int argc, char** argv)
 	{
 		printf("Oops! You didn't say the jello world file!\n");
 		printf("Usage: %s [worldfile]\n", argv[0]);
-		exit(0);
+		//exit(0);
 	}
 
 	readWorld(argv[1], &jello);

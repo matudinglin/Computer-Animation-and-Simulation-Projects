@@ -17,7 +17,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-struct point 
+struct Vector3d 
 {
    double x;
    double y;
@@ -33,13 +33,13 @@ struct world
   double dElastic; // Damping coefficient for all springs except collision springs
   double kCollision; // Hook's elasticity coefficient for collision springs
   double dCollision; // Damping coefficient collision springs
-  double mass; // mass of each of the 512 control points, mass assumed to be equal for every control point
+  double mass; // mass of each of the 512 control points, mass assumed to be equal for every control Vector3d
   int incPlanePresent; // Is the inclined plane present? 1 = YES, 0 = NO
   double a,b,c,d; // inclined plane has equation a * x + b * y + c * z + d = 0; if no inclined plane, these four fields are not used
   int resolution; // resolution for the 3d grid specifying the external force field; value of 0 means that there is no force field
-  struct point * forceField; // pointer to the array of values of the force field
-  struct point p[8][8][8]; // position of the 512 control points
-  struct point v[8][8][8]; // velocities of the 512 control points
+  struct Vector3d * forceField; // pointer to the array of values of the force field
+  struct Vector3d p[8][8][8]; // position of the 512 control points
+  struct Vector3d v[8][8][8]; // velocities of the 512 control points
 };
 
 
@@ -95,7 +95,7 @@ void writeWorld(const char * fileName, struct world * jello)
              jello->forceField[i * jello->resolution * jello->resolution + j * jello->resolution + k].z);
   
 
-  /* write initial point positions */
+  /* write initial Vector3d positions */
   for (i = 0; i <= 7 ; i++)
   {
     for (j = 0; j <= 7; j++)
@@ -106,7 +106,7 @@ void writeWorld(const char * fileName, struct world * jello)
     }
   }
       
-  /* write initial point velocities */
+  /* write initial Vector3d velocities */
   for (i = 0; i <= 7 ; i++)
   {
     for (j = 0; j <= 7; j++)
@@ -150,7 +150,7 @@ int main()
   // set the external force field
   jello.resolution=30;
   jello.forceField = 
-    (struct point *)malloc(jello.resolution*jello.resolution*jello.resolution*sizeof(struct point));
+    (struct Vector3d *)malloc(jello.resolution*jello.resolution*jello.resolution*sizeof(struct Vector3d));
   for (i=0; i<= jello.resolution-1; i++)
     for (j=0; j<= jello.resolution-1; j++)
       for (k=0; k<= jello.resolution-1; k++)
