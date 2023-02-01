@@ -12,10 +12,8 @@ Vector3d cross(const Vector3d& v1, const Vector3d& v2)
 	return v;
 }
 
-vector<Spring> createSprings()
+void createOriginalSprings(vector<Spring>& springs)
 {
-	vector<Spring> springs;
-
 	// create structural springs
 	{
 		double rest = 1.0 / 7.0;
@@ -129,7 +127,10 @@ vector<Spring> createSprings()
 			}
 		}
 	}
-
-
-	return springs;
 };
+
+
+//void createCollisionSprings(vector<Spring>& springs, const vector<Plane> &planes, const struct world* jello)
+//{
+//
+//}

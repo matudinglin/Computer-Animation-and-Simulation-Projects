@@ -97,7 +97,24 @@ struct Spring
 	Spring(int _x1, int _y1, int _z1, int _x2, int _y2, int _z2, double _rest)
 		:x1(_x1), y1(_y1), z1(_z1), x2(_x2), y2(_y2), z2(_z2), rest(_rest) {};
 	~Spring() = default;
-
 };
 
-vector<Spring> createSprings();
+struct Plane
+{
+	double a, b, c, d;
+	double factor;
+	Plane() = default;
+	Plane(double _a, double _b, double _c, double _d, double _factor)
+		:a(_a), b(_b), c(_c), d(_d), factor(_factor){};
+	~Plane() = default;
+
+	bool checkInside(const Vector3d& pos) const
+	{
+		return (a * pos.x + b * pos.y + c * pos.z + d) * factor > 0.0;
+	};
+};
+
+void createOriginalSprings(vector<Spring>& springs);
+//void createCollisionSprings(vector<Spring>& springs, const vector<Plane>& planes, const struct world* jello);
+
+

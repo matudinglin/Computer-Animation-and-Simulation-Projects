@@ -14,20 +14,46 @@
    Returns result in array 'a'. */
 void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 {
-	//for (int i = 0; i < 8; ++i)
-	//	for (int j = 0; j < 8; ++j)
-	//		for (int k = 0; k < 8; ++k)
-	//		{
-	//			a[i][j][k] = Vector3d(0, 0, 0);
-	//		}
-
-	// create spring
-	vector<Spring> springs;
-	springs = createSprings();
-	cout << "Generate " << springs.size() << " springs." << endl;
+	// initialize 
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+				a[i][j][k] = Vector3d(0, 0, 0);
+			}
 
 	double hook = jello->kElastic;
 	double damp = jello->dElastic;
+	Vector3d *forceField = jello->forceField;
+
+	// create original springs
+	vector<Spring> springs;
+	createOriginalSprings(springs);
+
+	// create collision springs
+	vector<Plane> planes;
+	planes.emplace_back(1, 0, 0, 2, -1);
+	planes.emplace_back(1, 0, 0, -2, 1);
+	planes.emplace_back(0, 1, 0, 2, -1);
+	planes.emplace_back(0, 1, 0, -2, 1);
+	planes.emplace_back(0, 0, 1, 2, -1);
+	planes.emplace_back(0, 0, 1, -2, 1);
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+				Vector3d pos = jello->p[i][j][k];
+				for (const Plane& plane : planes)
+				{
+					if (plane.checkInside(pos))
+					{
+						//cout << "collide!!!\n";
+						// point i, j, k collide with plane 
+						
+					}
+				}
+			}
+
 	for (const auto& spring : springs)
 	{
 		Vector3d springF, dampF;
@@ -47,13 +73,24 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 		a[xb][yb][zb] += -dampF;
 	}
 	
+	// add force field
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+				a[i][j][k] += Vector3d(0, -9.8, 0);
+			}
+	
+
 	// compute acceleration for every control point 
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j)
 			for (int k = 0; k < 8; ++k)
 			{
 				a[i][j][k] /= jello->mass;
-			}	
+			}
+
+
 }
 
 /* performs one step of Euler Integration */
