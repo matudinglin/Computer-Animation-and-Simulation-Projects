@@ -23,17 +23,34 @@ vector<Spring> createSprings()
 		{
 			for (int j = 0; j < 8; ++j)
 			{
-				for (int k = 0; k < 8; ++k)
+				for (int k = 0; k < 7; ++k)
 				{
-					for (int l = 0; l < 7; ++l)
-					{
-						springs.emplace_back(i + l, j, k, i + l + 1, j, k, rest);
-						springs.emplace_back(i, j + l, k, i, j + l + 1, k, rest);
-						springs.emplace_back(i, j, k + l, i, j, k + l + 1, rest);
-					}
+					springs.emplace_back(i, j, k, i, j, k + 1, rest);
 				}
 			}
 		}
+		for (int i = 0; i < 8; ++i)
+		{
+			for (int k = 0; k < 8; ++k)
+			{
+				for (int j = 0; j < 7; ++j)
+				{
+					springs.emplace_back(i, j, k, i, j + 1, k, rest);
+				}
+			}
+		}
+		for (int k = 0; k < 8; ++k)
+		{
+			for (int j = 0; j < 8; ++j)
+			{
+				for (int i = 0; i < 7; ++i)
+				{
+					springs.emplace_back(i, j, k, i + 1, j, k, rest);
+				}
+			}
+		}
+
+
 	}
 
 	// create shear springs
@@ -85,14 +102,29 @@ vector<Spring> createSprings()
 		{
 			for (int j = 0; j < 8; ++j)
 			{
-				for (int k = 0; k < 8; ++k)
+				for (int k = 0; k < 6; ++k)
 				{
-					for (int l = 0; l < 6; ++l)
-					{
-						springs.emplace_back(i + l, j, k, i + l + 2, j, k, rest);
-						springs.emplace_back(i, j + l, k, i, j + l + 2, k, rest);
-						springs.emplace_back(i, j, k + l, i, j, k + l + 2, rest);
-					}
+					springs.emplace_back(i, j, k, i, j, k + 2, rest);
+				}
+			}
+		}
+		for (int i = 0; i < 8; ++i)
+		{
+			for (int k = 0; k < 8; ++k)
+			{
+				for (int j = 0; j < 6; ++j)
+				{
+					springs.emplace_back(i, j, k, i, j + 2, k, rest);
+				}
+			}
+		}
+		for (int k = 0; k < 8; ++k)
+		{
+			for (int j = 0; j < 8; ++j)
+			{
+				for (int i = 0; i < 6; ++i)
+				{
+					springs.emplace_back(i, j, k, i + 2, j, k, rest);
 				}
 			}
 		}

@@ -14,46 +14,46 @@
    Returns result in array 'a'. */
 void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 {
-	for (int i = 0; i < 8; ++i)
-		for (int j = 0; j < 8; ++j)
-			for (int k = 0; k < 8; ++k)
-			{
-				a[i][j][k] = Vector3d(0, 0, 0);
-			}
-
-	//// create spring
-	//vector<Spring> springs;
-	//springs = createSprings();
-	//cout << "Generate " << springs.size() << " springs." << endl;
-
-	//double hook = jello->kElastic;
-	//double damp = jello->dElastic;
-	//for (const auto& spring : springs)
-	//{
-	//	Vector3d springF, dampF;
-	//	// add spring force
-	//	double R = spring.rest;
-	//	int xa = spring.x1, ya = spring.y1, za = spring.z1;
-	//	int xb = spring.x2, yb = spring.y2, zb = spring.z2;
-	//	Vector3d vecL = (jello->p[xa][ya][za] - jello->p[xb][yb][zb]);
-	//	double L = vecL.length();
-	//	springF = -hook * (L - R) * (vecL / L);
-	//	a[xa][ya][za] += springF;
-	//	a[xb][yb][zb] += -springF;
-	//	// add damping force
-	//	Vector3d vecVa = jello->v[xa][ya][za], vecVb = jello->v[xb][yb][zb];
-	//	dampF = -damp * dot(vecVa - vecVb, vecL) / L * (vecL / L);
-	//	a[xa][ya][za] += dampF;
-	//	a[xb][yb][zb] += -dampF;
-	//}
-	//
-	//// compute acceleration for every control point 
 	//for (int i = 0; i < 8; ++i)
 	//	for (int j = 0; j < 8; ++j)
 	//		for (int k = 0; k < 8; ++k)
 	//		{
-	//			a[i][j][k] /= jello->mass;
-	//		}	
+	//			a[i][j][k] = Vector3d(0, 0, 0);
+	//		}
+
+	// create spring
+	vector<Spring> springs;
+	springs = createSprings();
+	cout << "Generate " << springs.size() << " springs." << endl;
+
+	double hook = jello->kElastic;
+	double damp = jello->dElastic;
+	for (const auto& spring : springs)
+	{
+		Vector3d springF, dampF;
+		// add spring force
+		double R = spring.rest;
+		int xa = spring.x1, ya = spring.y1, za = spring.z1;
+		int xb = spring.x2, yb = spring.y2, zb = spring.z2;
+		Vector3d vecL = (jello->p[xa][ya][za] - jello->p[xb][yb][zb]);
+		double L = vecL.length();
+		springF = -hook * (L - R) * (vecL / L);
+		a[xa][ya][za] += springF;
+		a[xb][yb][zb] += -springF;
+		// add damping force
+		Vector3d vecVa = jello->v[xa][ya][za], vecVb = jello->v[xb][yb][zb];
+		dampF = -damp * dot(vecVa - vecVb, vecL) / L * (vecL / L);
+		a[xa][ya][za] += dampF;
+		a[xb][yb][zb] += -dampF;
+	}
+	
+	// compute acceleration for every control point 
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+				a[i][j][k] /= jello->mass;
+			}	
 }
 
 /* performs one step of Euler Integration */
