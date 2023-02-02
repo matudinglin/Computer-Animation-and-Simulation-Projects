@@ -86,7 +86,7 @@ void display()
 
 	// camera parameters are Phi, Theta, R
 	gluLookAt(R * cos(Phi) * cos(Theta), R * sin(Phi) * cos(Theta), R * sin(Theta),
-		0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+		0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 
 	/* Lighting */

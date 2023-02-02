@@ -49,7 +49,17 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 					{
 						//cout << "collide!!!\n";
 						// point i, j, k collide with plane 
-						
+						Vector3d springF, dampF;
+						// add spring force
+						double R = 0.0;
+						Vector3d normal = Vector3d(plane.a, plane.b, plane.c).normalized();
+						double L = (plane.a * pos.x + plane.b * pos.y + plane.c * pos.z)
+							/ sqrt(plane.a * plane.a + plane.b * plane.b + plane.c * plane.c);
+						springF = -hook * (L - R) * normal;
+						a[i][j][k] += springF;
+						// add damping force
+						dampF = -damp * dot(jello->v[i][j][k], normal) * normal;
+						a[i][j][k] += dampF;
 					}
 				}
 			}
@@ -78,7 +88,7 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 		for (int j = 0; j < 8; ++j)
 			for (int k = 0; k < 8; ++k)
 			{
-				a[i][j][k] += Vector3d(0, -9.8, 0);
+				a[i][j][k] += Vector3d(0, -3, 0);
 			}
 	
 
