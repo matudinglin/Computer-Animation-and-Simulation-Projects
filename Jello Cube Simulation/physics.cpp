@@ -26,11 +26,7 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 	double damp = jello->dElastic;
 	Vector3d *forceField = jello->forceField;
 
-	// create original springs
-	vector<Spring> springs;
-	createOriginalSprings(springs);
-
-	// create collision springs
+	// add collision force
 	vector<Plane> planes;
 	planes.emplace_back(1, 0, 0, 2, -1);
 	planes.emplace_back(1, 0, 0, -2, 1);
@@ -38,6 +34,7 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 	planes.emplace_back(0, 1, 0, -2, 1);
 	planes.emplace_back(0, 0, 1, 2, -1);
 	planes.emplace_back(0, 0, 1, -2, 1);
+	//if (jello->incPlanePresent) planes.emplace_back(jello->a, jello->b, jello->c, jello->d, -1);
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j)
 			for (int k = 0; k < 8; ++k)
@@ -47,7 +44,6 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 				{
 					if (plane.checkInside(pos))
 					{
-						//cout << "collide!!!\n";
 						// point i, j, k collide with plane 
 						Vector3d springF, dampF;
 						// add spring force
@@ -64,6 +60,7 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 				}
 			}
 
+	// add spring force
 	for (const auto& spring : springs)
 	{
 		Vector3d springF, dampF;
@@ -84,13 +81,19 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 	}
 	
 	// add force field
-	for (int i = 0; i < 8; ++i)
-		for (int j = 0; j < 8; ++j)
-			for (int k = 0; k < 8; ++k)
-			{
-				a[i][j][k] += Vector3d(0, -3, 0);
-			}
-	
+	if (jello->resolution != 0)
+	{
+		// for every point 
+		for (int i = 0; i < 8; ++i)
+			for (int j = 0; j < 8; ++j)
+				for (int k = 0; k < 8; ++k)
+				{
+					for (int r = 0; r < jello->resolution; ++r)
+					{
+
+					}
+				}
+	}
 
 	// compute acceleration for every control point 
 	for (int i = 0; i < 8; ++i)
@@ -99,8 +102,6 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 			{
 				a[i][j][k] /= jello->mass;
 			}
-
-
 }
 
 /* performs one step of Euler Integration */

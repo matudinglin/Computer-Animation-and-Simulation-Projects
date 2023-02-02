@@ -12,6 +12,7 @@
 #include "showCube.h"
 #include "input.h"
 #include "physics.h"
+#include "helper.h"
 
 // camera parameters
 double Theta = pi / 6;
@@ -33,6 +34,9 @@ struct world jello;
 
 int windowWidth, windowHeight;
 
+// springs
+vector<Spring> springs;
+
 void myinit()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -48,6 +52,11 @@ void myinit()
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
+
+
+	// create spring structure
+	createOriginalSprings(springs);
+
 
 	return;
 }

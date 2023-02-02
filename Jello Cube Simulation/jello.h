@@ -34,6 +34,9 @@ extern int g_iLeftMouseButton, g_iMiddleMouseButton, g_iRightMouseButton;
 // these variables control what is displayed on the screen
 extern int shear, bend, structural, pause, viewingMode, saveScreenToFile;
 
+// springs
+extern vector<Spring> springs;
+
 struct world
 {
 	char integrator[10]; // "RK4" or "Euler"

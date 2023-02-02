@@ -40,8 +40,8 @@ void mouseMotionDrag(int x, int y)
 
 	if (g_iRightMouseButton) // handle camera rotations
 	{
-		Phi += vMouseDelta[0] * 0.01;
-		Theta += vMouseDelta[1] * 0.01;
+		Phi += vMouseDelta[1] * 0.01;
+		Theta += vMouseDelta[0] * 0.01;
 
 		if (Phi > 2 * pi)
 			Phi -= 2 * pi;
