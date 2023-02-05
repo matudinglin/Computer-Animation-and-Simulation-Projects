@@ -81,17 +81,43 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 	}
 	
 	// add force field
+	int unit = jello->resolution;
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+
+			}
+
+	auto res = jello->resolution;
 	if (jello->resolution != 0)
 	{
+		double grid = 4.0 / double(jello->resolution - 1);
 		// for every point 
 		for (int i = 0; i < 8; ++i)
 			for (int j = 0; j < 8; ++j)
 				for (int k = 0; k < 8; ++k)
 				{
-					for (int r = 0; r < jello->resolution; ++r)
-					{
-
-					}
+					Vector3d pos = jello->p[i][j][k];
+					int fi, fj, fk;
+					fi = (pos.x+2) / grid; fj = (pos.y+2) / grid; fk = (pos.z +2) / grid;
+					Vector3d f000 = jello->forceField[fi * res + fj * res + fk * res];
+					Vector3d f001 = jello->forceField[fi * res + fj * res + (fk + 1) * res];
+					Vector3d f010 = jello->forceField[fi * res + (fj + 1)* res + fk * res];
+					Vector3d f011 = jello->forceField[fi * res + (fj + 1) * res + (fk + 1) * res];
+					Vector3d f100 = jello->forceField[(fi+1) * res + fj * res + fk * res];
+					Vector3d f101 = jello->forceField[(fi + 1) * res + fj * res + (fk + 1) * res];
+					Vector3d f110 = jello->forceField[(fi + 1) * res + (fj + 1) * res + fk * res];
+					Vector3d f111 = jello->forceField[(fi + 1) * res + (fj + 1) * res + (fk + 1) * res];
+					// Trilinear interpolation
+					a[i][j][k] += 0.1*trilinearInterpolation(pos.x, pos.y, pos.z,
+						f000.x, f111.x,
+						f000.y, f111.y,
+						f000.z, f111.z,
+						f000, f001,
+						f010, f011,
+						f100, f101,
+						f110, f111);
 				}
 	}
 

@@ -1,6 +1,8 @@
 #include "helper.h"
 #include "jello.h"
 
+const double EPSILON = 1.0 / DBL_MAX;
+
 double dot(const Vector3d& v1, const Vector3d& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
 
 Vector3d cross(const Vector3d& v1, const Vector3d& v2)
@@ -11,6 +13,34 @@ Vector3d cross(const Vector3d& v1, const Vector3d& v2)
 	v.z = v1.x * v2.y - v1.y * v2.x;
 	return v;
 }
+
+Vector3d trilinearInterpolation(double x, double y, double z,
+							double x1, double x2,
+							double y1, double y2,
+							double z1, double z2,
+							Vector3d f000, Vector3d f001,
+							Vector3d f010, Vector3d f011,
+							Vector3d f100, Vector3d f101,
+							Vector3d f110, Vector3d f111) 
+{
+	double xd = 0, yd = 0, zd = 0;
+	if(abs(x1 - x2) > EPSILON) xd = (x - x1) / (x2 - x1);
+	if(abs(y1 - y2) > EPSILON) yd = (y - y1) / (y2 - y1);
+	if(abs(z1 - z2) > EPSILON) zd = (z - z1) / (z2 - z1);
+
+	Vector3d c000 = f000 * (1 - xd) + f100 * xd;
+	Vector3d c001 = f001 * (1 - xd) + f101 * xd;
+	Vector3d c010 = f010 * (1 - xd) + f110 * xd;
+	Vector3d c011 = f011 * (1 - xd) + f111 * xd;
+
+	Vector3d c00 = c000 * (1 - yd) + c010 * yd;
+	Vector3d c01 = c001 * (1 - yd) + c011 * yd;
+
+	Vector3d c0 = c00 * (1 - zd) + c01 * zd;
+
+	return c0;
+}
+
 
 void createOriginalSprings(vector<Spring>& springs)
 {
@@ -128,6 +158,8 @@ void createOriginalSprings(vector<Spring>& springs)
 		}
 	}
 };
+
+
 
 
 //void createCollisionSprings(vector<Spring>& springs, const vector<Plane> &planes, const struct world* jello)
