@@ -15,18 +15,16 @@ Vector3d cross(const Vector3d& v1, const Vector3d& v2)
 }
 
 Vector3d trilinearInterpolation(double x, double y, double z,
-							double x1, double x2,
-							double y1, double y2,
-							double z1, double z2,
-							Vector3d f000, Vector3d f001,
-							Vector3d f010, Vector3d f011,
-							Vector3d f100, Vector3d f101,
-							Vector3d f110, Vector3d f111) 
+								double x1, double y1, double z1,
+								double x2, double y2, double z2,
+								Vector3d f000, Vector3d f001,
+								Vector3d f010, Vector3d f011,
+								Vector3d f100, Vector3d f101,
+								Vector3d f110, Vector3d f111) 
 {
-	double xd = 0, yd = 0, zd = 0;
-	if(abs(x1 - x2) > EPSILON) xd = (x - x1) / (x2 - x1);
-	if(abs(y1 - y2) > EPSILON) yd = (y - y1) / (y2 - y1);
-	if(abs(z1 - z2) > EPSILON) zd = (z - z1) / (z2 - z1);
+	double xd = (x - x1) / (x2 - x1);
+	double yd = (y - y1) / (y2 - y1);
+	double zd = (z - z1) / (z2 - z1);
 
 	Vector3d c000 = f000 * (1 - xd) + f100 * xd;
 	Vector3d c001 = f001 * (1 - xd) + f101 * xd;
@@ -42,7 +40,7 @@ Vector3d trilinearInterpolation(double x, double y, double z,
 }
 
 
-void createOriginalSprings(vector<Spring>& springs)
+void createSprings(vector<Spring>& springs)
 {
 	// create structural springs
 	{
@@ -159,6 +157,15 @@ void createOriginalSprings(vector<Spring>& springs)
 	}
 };
 
+void createPlanes(vector<Plane>& planes)
+{
+	planes.emplace_back(1, 0, 0, 2, -1);
+	planes.emplace_back(1, 0, 0, -2, 1);
+	planes.emplace_back(0, 1, 0, 2, -1);
+	planes.emplace_back(0, 1, 0, -2, 1);
+	planes.emplace_back(0, 0, 1, 2, -1);
+	planes.emplace_back(0, 0, 1, -2, 1);
+}
 
 
 

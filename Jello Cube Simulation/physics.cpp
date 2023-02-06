@@ -24,16 +24,9 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 
 	double hook = jello->kElastic;
 	double damp = jello->dElastic;
-	Vector3d *forceField = jello->forceField;
 
 	// add collision force
-	vector<Plane> planes;
-	planes.emplace_back(1, 0, 0, 2, -1);
-	planes.emplace_back(1, 0, 0, -2, 1);
-	planes.emplace_back(0, 1, 0, 2, -1);
-	planes.emplace_back(0, 1, 0, -2, 1);
-	planes.emplace_back(0, 0, 1, 2, -1);
-	planes.emplace_back(0, 0, 1, -2, 1);
+	double collisionFactor = 0.5;
 	//if (jello->incPlanePresent) planes.emplace_back(jello->a, jello->b, jello->c, jello->d, -1);
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j)
@@ -52,7 +45,7 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 						double L = (plane.a * pos.x + plane.b * pos.y + plane.c * pos.z)
 							/ sqrt(plane.a * plane.a + plane.b * plane.b + plane.c * plane.c);
 						springF = -hook * (L - R) * normal;
-						a[i][j][k] += springF;
+						a[i][j][k] += collisionFactor * springF;
 						// add damping force
 						dampF = -damp * dot(jello->v[i][j][k], normal) * normal;
 						a[i][j][k] += dampF;
@@ -79,17 +72,11 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 		a[xa][ya][za] += dampF;
 		a[xb][yb][zb] += -dampF;
 	}
-	
+
 	// add force field
-	int unit = jello->resolution;
-	for (int i = 0; i < 8; ++i)
-		for (int j = 0; j < 8; ++j)
-			for (int k = 0; k < 8; ++k)
-			{
-
-			}
-
+	Vector3d* forceField = jello->forceField;
 	auto res = jello->resolution;
+	double forceFieldFactor = 1.0;
 	if (jello->resolution != 0)
 	{
 		double grid = 4.0 / double(jello->resolution - 1);
@@ -100,24 +87,20 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 				{
 					Vector3d pos = jello->p[i][j][k];
 					int fi, fj, fk;
-					fi = (pos.x+2) / grid; fj = (pos.y+2) / grid; fk = (pos.z +2) / grid;
-					Vector3d f000 = jello->forceField[fi * res + fj * res + fk * res];
-					Vector3d f001 = jello->forceField[fi * res + fj * res + (fk + 1) * res];
-					Vector3d f010 = jello->forceField[fi * res + (fj + 1)* res + fk * res];
-					Vector3d f011 = jello->forceField[fi * res + (fj + 1) * res + (fk + 1) * res];
-					Vector3d f100 = jello->forceField[(fi+1) * res + fj * res + fk * res];
-					Vector3d f101 = jello->forceField[(fi + 1) * res + fj * res + (fk + 1) * res];
-					Vector3d f110 = jello->forceField[(fi + 1) * res + (fj + 1) * res + fk * res];
-					Vector3d f111 = jello->forceField[(fi + 1) * res + (fj + 1) * res + (fk + 1) * res];
+					fi = (pos.x + 2) / grid; fj = (pos.y + 2) / grid; fk = (pos.z + 2) / grid;
+					Vector3d f000 = forceField[fi * res + fj * res + fk * res];
+					Vector3d f001 = forceField[fi * res + fj * res + (fk + 1) * res];
+					Vector3d f010 = forceField[fi * res + (fj + 1) * res + fk * res];
+					Vector3d f011 = forceField[fi * res + (fj + 1) * res + (fk + 1) * res];
+					Vector3d f100 = forceField[(fi + 1) * res + fj * res + fk * res];
+					Vector3d f101 = forceField[(fi + 1) * res + fj * res + (fk + 1) * res];
+					Vector3d f110 = forceField[(fi + 1) * res + (fj + 1) * res + fk * res];
+					Vector3d f111 = forceField[(fi + 1) * res + (fj + 1) * res + (fk + 1) * res];
 					// Trilinear interpolation
-					a[i][j][k] += 0.1*trilinearInterpolation(pos.x, pos.y, pos.z,
-						f000.x, f111.x,
-						f000.y, f111.y,
-						f000.z, f111.z,
-						f000, f001,
-						f010, f011,
-						f100, f101,
-						f110, f111);
+					a[i][j][k] += forceFieldFactor * trilinearInterpolation(pos.x, pos.y, pos.z,
+						fi * grid - 2, fj * grid - 2, fk * grid - 2,
+						(fi + 1) * grid - 2, (fj + 1) * grid - 2, (fk+1) * grid - 2,
+						f000, f001, f010, f011, f100, f101, f110, f111);
 				}
 	}
 

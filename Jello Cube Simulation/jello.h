@@ -36,6 +36,10 @@ extern int shear, bend, structural, pause, viewingMode, saveScreenToFile;
 
 // springs
 extern vector<Spring> springs;
+extern vector<Plane> planes;
+
+// interaction
+extern Vector3d mouseForce;
 
 struct world
 {

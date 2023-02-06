@@ -36,6 +36,10 @@ int windowWidth, windowHeight;
 
 // springs
 vector<Spring> springs;
+vector<Plane> planes;
+
+// interaction
+Vector3d mouseForce;
 
 void myinit()
 {
@@ -54,9 +58,8 @@ void myinit()
 	glEnable(GL_LINE_SMOOTH);
 
 
-	// create spring structure
-	createOriginalSprings(springs);
-	
+	createSprings(springs);
+	createPlanes(planes);
 
 
 	return;
@@ -258,8 +261,8 @@ int main(int argc, char** argv)
 	/* double buffered window, use depth testing, 640x480 */
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	windowWidth = 640;
-	windowHeight = 480;
+	windowWidth = 1280;
+	windowHeight = 960;
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Jello cube");

@@ -85,6 +85,13 @@ struct Vector3d
 
 double dot(const Vector3d& v1, const Vector3d& v2);
 Vector3d cross(const Vector3d& v1, const Vector3d& v2);
+Vector3d trilinearInterpolation(double x, double y, double z,
+								double x1, double y1, double z1,
+								double x2, double y2, double z2,
+								Vector3d f000, Vector3d f001,
+								Vector3d f010, Vector3d f011,
+								Vector3d f100, Vector3d f101,
+								Vector3d f110, Vector3d f111);
 
 
 struct Spring
@@ -114,14 +121,6 @@ struct Plane
 	};
 };
 
-void createOriginalSprings(vector<Spring>& springs);
+void createSprings(vector<Spring>& springs);
 //void createCollisionSprings(vector<Spring>& springs, const vector<Plane>& planes, const struct world* jello);
-Vector3d trilinearInterpolation(double x, double y, double z,
-	double x1, double x2,
-	double y1, double y2,
-	double z1, double z2,
-	Vector3d f000, Vector3d f001,
-	Vector3d f010, Vector3d f011,
-	Vector3d f100, Vector3d f101,
-	Vector3d f110, Vector3d f111);
-
+void createPlanes(vector<Plane>& planes);
