@@ -27,7 +27,6 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 
 	// add collision force
 	double collisionFactor = 0.5;
-	//if (jello->incPlanePresent) planes.emplace_back(jello->a, jello->b, jello->c, jello->d, -1);
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j)
 			for (int k = 0; k < 8; ++k)
@@ -75,11 +74,11 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 
 	// add force field
 	Vector3d* forceField = jello->forceField;
-	auto res = jello->resolution;
+	int res = jello->resolution;
 	double forceFieldFactor = 1.0;
 	if (jello->resolution != 0)
 	{
-		double grid = 4.0 / double(jello->resolution - 1);
+		double grid = 4.0 / double(res - 1);
 		// for every point 
 		for (int i = 0; i < 8; ++i)
 			for (int j = 0; j < 8; ++j)

@@ -60,6 +60,7 @@ void myinit()
 
 	createSprings(springs);
 	createPlanes(planes);
+	if (jello.incPlanePresent) planes.emplace_back(jello.a, jello.b, jello.c, jello.d, -1);
 
 
 	return;

@@ -8,6 +8,8 @@
 #include "jello.h"
 #include "showCube.h"
 
+
+
 int pointMap(int side, int i, int j)
 {
 	int r;
@@ -288,6 +290,52 @@ void showBoundingBox()
 
 	glEnd();
 
+	// show inclined plane
+	if (jello.incPlanePresent)
+	{
+		Plane incPlane = Plane(jello.a, jello.b, jello.c, jello.d, -1);
+		// find intersections
+		vector<Vector3d> intersections;
+		{
+			auto solveX = [&incPlane](double y, double z)->double {return (-incPlane.d - incPlane.b * y - incPlane.c * z) / incPlane.a; };
+			double axisX[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
+			for (int i = 0; i < 4; ++i)
+			{
+				double x = solveX(axisX[i][0], axisX[i][1]);
+				if (x <= 2 && x >= -2) intersections.emplace_back(x, axisX[i][0], axisX[i][1]);
+			}
+		}
+		{
+			auto solveY = [&incPlane](double x, double z)->double {return (-incPlane.d - incPlane.a * x - incPlane.c * z) / incPlane.b; };
+			double axisY[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
+			for (int i = 0; i < 4; ++i)
+			{
+				double y = solveY(axisY[i][0], axisY[i][1]);
+				if (y <= 2 && y >= -2) intersections.emplace_back(axisY[i][0], y, axisY[i][1]);
+			}
+		}
+		{
+			auto solveZ = [&incPlane](double x, double y)->double {return (-incPlane.d - incPlane.a * x - incPlane.b * y) / incPlane.c; };
+			double axisZ[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
+			for (int i = 0; i < 4; ++i)
+			{
+				double z = solveZ(axisZ[i][0], axisZ[i][1]);
+				if (z <= 2 && z >= -2) intersections.emplace_back(axisZ[i][0], axisZ[i][1], z);
+			}
+		}
+
+
+		glDisable(GL_CULL_FACE);   // render both sides
+		glBegin(GL_TRIANGLES);
+		// triangle mode
+		for (const auto &inter : intersections) 
+		{
+			glVertex3f(inter.x, inter.y, inter.z);
+		}
+
+		glEnd();
+		glEnable(GL_CULL_FACE);
+	}
 	return;
 }
 
