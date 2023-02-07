@@ -325,14 +325,12 @@ void showBoundingBox()
 		}
 
 
-		glDisable(GL_CULL_FACE);   // render both sides
+		glDisable(GL_CULL_FACE);
 		glBegin(GL_TRIANGLES);
-		// triangle mode
-		for (const auto &inter : intersections) 
+		for (const auto& inter : intersections)
 		{
 			glVertex3f(inter.x, inter.y, inter.z);
 		}
-
 		glEnd();
 		glEnable(GL_CULL_FACE);
 	}

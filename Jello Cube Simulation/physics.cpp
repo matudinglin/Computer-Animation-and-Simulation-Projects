@@ -102,6 +102,15 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 						f000, f001, f010, f011, f100, f101, f110, f111);
 				}
 	}
+	
+	// add mouse force
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j)
+			for (int k = 0; k < 8; ++k)
+			{
+				a[i][j][k] += mouseForce;
+			}
+
 
 	// compute acceleration for every control point 
 	for (int i = 0; i < 8; ++i)

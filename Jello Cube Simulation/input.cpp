@@ -62,7 +62,10 @@ void mouseMotionDrag(int x, int y)
 	// interact with the cube
 	if (g_iLeftMouseButton)
 	{
-		/*mouseForce = Vector3d(sqrt(vMouseDelta[1] * vMouseDelta[1] + vMouseDelta[0] * vMouseDelta[0], 0, 0);*/
+		mouseForce = Vector3d(vMouseDelta[0] * 0.0005, vMouseDelta[1] * 0.0005, 0);
+		// rotate 
+		mouseForce = Vector3d(cos(Theta) * mouseForce.x + sin(Theta) * mouseForce.z, mouseForce.y, -sin(Theta) * mouseForce.x + cos(Theta) * mouseForce.z);
+		mouseForce = Vector3d(mouseForce.x, cos(Phi) * mouseForce.y - sin(Phi) * mouseForce.z,  sin(Phi) * mouseForce.y + cos(Phi) * mouseForce.z);
 	}
 }
 
