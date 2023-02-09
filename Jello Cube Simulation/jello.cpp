@@ -14,6 +14,7 @@
 #include "physics.h"
 #include "helper.h"
 
+
 // camera parameters
 double Theta = pi / 6;
 double Phi = pi / 6;
@@ -40,6 +41,10 @@ vector<Plane> planes;
 
 // interaction
 Vector3d mouseForce;
+
+// FPS
+system_clock::time_point lastTime = system_clock::now();
+int frames = 0;
 
 void myinit()
 {
@@ -202,6 +207,17 @@ void display()
 
 	// show the bounding box
 	showBoundingBox();
+
+	// show FPS
+	system_clock::time_point currentTime = system_clock::now();
+	frames++;
+	duration<double> deltaTime = currentTime - lastTime;
+	if (deltaTime.count() >= 1.0)
+	{
+		cout << "FPS:" << int(double(frames) / deltaTime.count()) << endl;
+		frames = 0;
+		lastTime = system_clock::now();
+	}
 
 	glutSwapBuffers();
 }

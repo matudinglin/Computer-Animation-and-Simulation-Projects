@@ -16,6 +16,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <chrono>
+
+using namespace std::chrono;
 
 #define pi 3.141592653589793238462643383279 
 
@@ -40,6 +43,10 @@ extern vector<Plane> planes;
 
 // interaction
 extern Vector3d mouseForce;
+
+// FPS
+extern system_clock::time_point lastTime;
+extern int frames;
 
 struct world
 {
