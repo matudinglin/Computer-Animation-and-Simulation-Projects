@@ -43,17 +43,17 @@ void mouseMotionDrag(int x, int y)
 		Phi += vMouseDelta[1] * 0.01;
 		Theta += vMouseDelta[0] * 0.01;
 
-		if (Phi > 2 * pi)
-			Phi -= 2 * pi;
+		if (Phi > 2 * PI)
+			Phi -= 2 * PI;
 
 		if (Phi < 0)
-			Phi += 2 * pi;
+			Phi += 2 * PI;
 
-		if (Theta > pi / 2 - 0.01) // dont let the Vector3d enter the north pole
-			Theta = pi / 2 - 0.01;
+		if (Theta > PI / 2 - 0.01) // dont let the Vector3d enter the north pole
+			Theta = PI / 2 - 0.01;
 
-		if (Theta < -pi / 2 + 0.01)
-			Theta = -pi / 2 + 0.01;
+		if (Theta < -PI / 2 + 0.01)
+			Theta = -PI / 2 + 0.01;
 
 		g_vMousePos[0] = x;
 		g_vMousePos[1] = y;
@@ -104,8 +104,8 @@ void keyboardFunc(unsigned char key, int x, int y)
 		break;
 
 	case 'e':
-		Theta = pi / 6;
-		Phi = pi / 6;
+		Theta = PI / 6;
+		Phi = PI / 6;
 		viewingMode = 0;
 		break;
 

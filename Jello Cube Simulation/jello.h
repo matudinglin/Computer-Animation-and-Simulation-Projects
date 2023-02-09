@@ -20,7 +20,7 @@
 
 using namespace std::chrono;
 
-#define pi 3.141592653589793238462643383279 
+#define PI 3.141592653589793238462643383279 
 
 // camera angles
 extern double Theta;

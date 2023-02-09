@@ -14,10 +14,14 @@
 #include "physics.h"
 #include "helper.h"
 
+#include <stdint.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 
 // camera parameters
-double Theta = pi / 6;
-double Phi = pi / 6;
+double Theta = PI / 6;
+double Phi = PI / 6;
 double R = 6;
 
 // mouse control
@@ -272,6 +276,12 @@ int main(int argc, char** argv)
 	}
 
 	readWorld(argv[1], &jello);
+
+	// load texture image
+	int width, height, bpp;
+	uint8_t* rgb_image = stbi_load("texture/Dirt-Block-600x600.png", &width, &height, &bpp, 3);
+	//stbi_image_free(rgb_image);
+
 
 	glutInit(&argc, argv);
 
