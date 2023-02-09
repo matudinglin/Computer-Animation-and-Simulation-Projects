@@ -50,6 +50,11 @@ Vector3d mouseForce;
 system_clock::time_point lastTime = system_clock::now();
 int frames = 0;
 
+// texture 
+GLuint texture[1];
+int textureWidth, textureHeight;
+unsigned char* textureImage;
+
 void myinit()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -65,8 +70,22 @@ void myinit()
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
+	 
+	// texture
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glGenTextures(1, &texture[0]);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth,
+		textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		textureImage);
 
-
+	// jello code
 	createSprings(springs);
 	createPlanes(planes);
 	if (jello.incPlanePresent) planes.emplace_back(jello.a, jello.b, jello.c, jello.d, -1);
@@ -212,6 +231,46 @@ void display()
 	// show the bounding box
 	showBoundingBox();
 
+	// texture test
+	glEnable(GL_TEXTURE_2D);
+
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
+
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
+
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
+
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, -1.0f, -1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
+
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
+	glEnd();
+	
+
+	glDisable(GL_TEXTURE_2D);
+
+
 	// show FPS
 	system_clock::time_point currentTime = system_clock::now();
 	frames++;
@@ -278,9 +337,8 @@ int main(int argc, char** argv)
 	readWorld(argv[1], &jello);
 
 	// load texture image
-	int width, height, bpp;
-	uint8_t* rgb_image = stbi_load("texture/Dirt-Block-600x600.png", &width, &height, &bpp, 3);
-	//stbi_image_free(rgb_image);
+	textureImage = stbi_load("texture/Dirt-Block-600x600.png", &textureWidth, &textureHeight, nullptr, 3);
+	
 
 
 	glutInit(&argc, argv);
@@ -320,6 +378,10 @@ int main(int argc, char** argv)
 
 	/* forever sink in the black hole */
 	glutMainLoop();
+
+	// free image
+	stbi_image_free(textureImage);
+
 
 	return(0);
 }
