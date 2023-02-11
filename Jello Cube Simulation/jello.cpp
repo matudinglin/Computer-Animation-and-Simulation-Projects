@@ -58,6 +58,8 @@ struct TextureImage
 GLuint textureIndices[5];
 TextureImage stoneWallTexture;
 TextureImage grassFloorTexture;
+TextureImage magmaHeadTexture;
+TextureImage magmaBodyTexture;
 
 void LoadTexture()
 {
@@ -82,6 +84,27 @@ void LoadTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, grassFloorTexture.textureWidth,
 		grassFloorTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
 		grassFloorTexture.data);
+
+	// magma head
+	glBindTexture(GL_TEXTURE_2D, textureIndices[2]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, magmaHeadTexture.textureWidth,
+		magmaHeadTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		magmaHeadTexture.data);
+
+	// magma body
+	glBindTexture(GL_TEXTURE_2D, textureIndices[3]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, magmaBodyTexture.textureWidth,
+		magmaBodyTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		magmaBodyTexture.data);
+
 }
 
 
@@ -317,7 +340,8 @@ int main(int argc, char** argv)
 	// load textureIndices image
 	stoneWallTexture.data = stbi_load("texture/stone-wall.jpg", &stoneWallTexture.textureWidth, &stoneWallTexture.textureHeight, nullptr, 3);
 	grassFloorTexture.data = stbi_load("texture/1.png", &grassFloorTexture.textureWidth, &grassFloorTexture.textureHeight, nullptr, 3);
-
+	magmaHeadTexture.data = stbi_load("texture/magma-head.jpg", &magmaHeadTexture.textureWidth, &magmaHeadTexture.textureHeight, nullptr, 3);
+	magmaBodyTexture.data = stbi_load("texture/magma-body.jpg", &magmaBodyTexture.textureWidth, &magmaBodyTexture.textureHeight, nullptr, 3);
 
 	glutInit(&argc, argv);
 
@@ -360,7 +384,8 @@ int main(int argc, char** argv)
 	// free image
 	stbi_image_free(stoneWallTexture.data);
 	stbi_image_free(grassFloorTexture.data);
-
+	stbi_image_free(magmaHeadTexture.data);
+	stbi_image_free(magmaBodyTexture.data);
 
 
 	return(0);
