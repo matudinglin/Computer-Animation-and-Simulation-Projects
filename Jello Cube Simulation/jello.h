@@ -48,6 +48,9 @@ extern Vector3d mouseForce;
 extern system_clock::time_point lastTime;
 extern int frames;
 
+// texture
+extern GLuint textureIndices[5];
+
 struct world
 {
 	char integrator[10]; // "RK4" or "Euler"

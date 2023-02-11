@@ -238,57 +238,47 @@ void showBoundingBox()
 
 	glColor4f(0.6, 0.6, 0.6, 0);
 
-	glBegin(GL_LINES);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
+	
+	glBindTexture(GL_TEXTURE_2D, textureIndices[0]);
+	glBegin(GL_QUADS);
+	// back
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, -2.0f, -2.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, 2.0f, -2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, -2.0f, -2.0f);
 
-	// front face
-	for (i = -2; i <= 2; i++)
-	{
-		glVertex3f(i, -2, -2);
-		glVertex3f(i, -2, 2);
-	}
-	for (j = -2; j <= 2; j++)
-	{
-		glVertex3f(-2, -2, j);
-		glVertex3f(2, -2, j);
-	}
+	// left
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, -2.0f, 2.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.0f, 2.0f, 2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-2.0f, -2.0f, -2.0f);
 
-	// back face
-	for (i = -2; i <= 2; i++)
-	{
-		glVertex3f(i, 2, -2);
-		glVertex3f(i, 2, 2);
-	}
-	for (j = -2; j <= 2; j++)
-	{
-		glVertex3f(-2, 2, j);
-		glVertex3f(2, 2, j);
-	}
+	// right
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(2.0f, -2.0f, -2.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.0f, 2.0f, -2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, 2.0f, 2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, -2.0f, 2.0f);
 
-	// left face
-	for (i = -2; i <= 2; i++)
-	{
-		glVertex3f(-2, i, -2);
-		glVertex3f(-2, i, 2);
-	}
-	for (j = -2; j <= 2; j++)
-	{
-		glVertex3f(-2, -2, j);
-		glVertex3f(-2, 2, j);
-	}
-
-	// right face
-	for (i = -2; i <= 2; i++)
-	{
-		glVertex3f(2, i, -2);
-		glVertex3f(2, i, 2);
-	}
-	for (j = -2; j <= 2; j++)
-	{
-		glVertex3f(2, -2, j);
-		glVertex3f(2, 2, j);
-	}
-
+	// up
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.0f, 2.0f, -2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, 2.0f, 2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-2.0f, 2.0f, 2.0f);
 	glEnd();
+
+
+	glBindTexture(GL_TEXTURE_2D, textureIndices[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, -2.0f, -2.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.0f, -2.0f, -2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, -2.0f, 2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-2.0f, -2.0f, 2.0f);
+	glEnd();
+	
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_CULL_FACE);
 
 	// show inclined plane
 	if (jello.incPlanePresent)
