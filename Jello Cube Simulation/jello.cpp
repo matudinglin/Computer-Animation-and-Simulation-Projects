@@ -32,7 +32,7 @@ int g_iLeftMouseButton, g_iMiddleMouseButton, g_iRightMouseButton;
 int sprite = 0;
 
 // these variables control what is displayed on screen
-int shear = 0, bend = 0, structural = 1, pause = 0, viewingMode = 0, saveScreenToFile = 0;
+int shear = 0, bend = 0, structural = 1, pause = 0, viewingMode = 0, saveScreenToFile = 1;
 
 struct world jello;
 
@@ -326,14 +326,14 @@ void display()
 
 void doIdle()
 {
-	char s[20] = "picxxxx.ppm";
+	char s[30] = "results/picxxxx.ppm";
 	int i;
 
 	// save screen to file
-	s[3] = 48 + (sprite / 1000);
-	s[4] = 48 + (sprite % 1000) / 100;
-	s[5] = 48 + (sprite % 100) / 10;
-	s[6] = 48 + sprite % 10;
+	s[11] = 48 + (sprite / 1000);
+	s[12] = 48 + (sprite % 1000) / 100;
+	s[13] = 48 + (sprite % 100) / 10;
+	s[14] = 48 + sprite % 10;
 
 	if (saveScreenToFile == 1)
 	{

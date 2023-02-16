@@ -67,7 +67,6 @@ void mouseMotionDrag(int x, int y)
 		mouseForce = Vector3d(cos(Phi) * mouseForce.x + sin(Phi) * mouseForce.z, mouseForce.y, -sin(Phi) * mouseForce.x + cos(Phi) * mouseForce.z);
 		mouseForce = Vector3d(mouseForce.x, cos(Theta) * mouseForce.y - sin(Theta) * mouseForce.z,  sin(Theta) * mouseForce.y + cos(Theta) * mouseForce.z);
 	}
-	
 }
 
 void mouseMotion(int x, int y)
