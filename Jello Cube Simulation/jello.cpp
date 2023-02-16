@@ -56,55 +56,60 @@ struct TextureImage
 	unsigned char* data;
 };
 GLuint textureIndices[5];
-TextureImage stoneWallTexture;
-TextureImage grassFloorTexture;
-TextureImage magmaHeadTexture;
-TextureImage magmaBodyTexture;
+TextureImage backTexture;
+TextureImage topTexture;
+TextureImage downTexture;
+TextureImage leftTexture;
+TextureImage rightTexture;
 
 void LoadTexture()
 {
 	glGenTextures(5, textureIndices);
-	// stone wall
 	
 	glBindTexture(GL_TEXTURE_2D, textureIndices[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, stoneWallTexture.textureWidth,
-		stoneWallTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-		stoneWallTexture.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, backTexture.textureWidth,
+		backTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		backTexture.data);
 
-	// grass floor
 	glBindTexture(GL_TEXTURE_2D, textureIndices[1]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, grassFloorTexture.textureWidth,
-		grassFloorTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-		grassFloorTexture.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, topTexture.textureWidth,
+		topTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		topTexture.data);
 
-	// magma head
 	glBindTexture(GL_TEXTURE_2D, textureIndices[2]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, magmaHeadTexture.textureWidth,
-		magmaHeadTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-		magmaHeadTexture.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, downTexture.textureWidth,
+		downTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		downTexture.data);
 
-	// magma body
 	glBindTexture(GL_TEXTURE_2D, textureIndices[3]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, magmaBodyTexture.textureWidth,
-		magmaBodyTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-		magmaBodyTexture.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, leftTexture.textureWidth,
+		leftTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		leftTexture.data);
 
+	glBindTexture(GL_TEXTURE_2D, textureIndices[4]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, rightTexture.textureWidth,
+		rightTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		rightTexture.data);
 }
 
 
@@ -181,7 +186,6 @@ void display()
 	// global ambient light
 	GLfloat aGa[] = { 0.0, 0.0, 0.0, 0.0 };
 
-	// light 's ambient, diffuse, specular
 	GLfloat lKa0[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat lKd0[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat lKs0[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -213,6 +217,39 @@ void display()
 	GLfloat lKa7[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat lKd7[] = { 0.0, 1.0, 1.0, 1.0 };
 	GLfloat lKs7[] = { 0.0, 1.0, 1.0, 1.0 };
+	
+	//// white light
+	//GLfloat lKa0[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd0[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs0[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa1[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd1[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs1[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa2[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd2[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs2[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa3[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd3[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs3[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa4[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd4[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs4[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa5[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd5[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs5[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa6[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd6[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs6[] = { 1.0, 1.0, 1.0, 1.0 };
+
+	//GLfloat lKa7[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKd7[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat lKs7[] = { 1.0, 1.0, 1.0, 1.0 };
 
 	// light positions and directions
 	GLfloat lP0[] = { -1.999, -1.999, -1.999, 1.0 };
@@ -225,10 +262,10 @@ void display()
 	GLfloat lP7[] = { -1.999, 1.999, 1.999, 1.0 };
 
 	// jelly material color
-	GLfloat mKa[] = { 0.1, 0.8, 0.1, 0.7 };
-	GLfloat mKd[] = { 0.1, 0.8, 0.1, 0.7 };
-	GLfloat mKs[] = { 0.1, 0.8, 0.1, 0.7 };
-	GLfloat mKe[] = { 0.1, 0.8, 0.1, 0.7 };
+	GLfloat mKa[] = { 0.2, 0.2, 0.2, 0.7 };
+	GLfloat mKd[] = { 0.5, 0.5, 0.5, 0.7 };
+	GLfloat mKs[] = { 1.0, 1.0, 1.0, 0.7 };
+	GLfloat mKe[] = { 0.2, 0.2, 0.2, 0.7 };
 
 	/* set up lighting */
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, aGa);
@@ -262,11 +299,11 @@ void display()
 
 	glEnable(GL_DEPTH_TEST);
 
-	// show the inclined plane
-	showIncPlane();
-
 	// show the bounding box
 	showBoundingBox();
+
+	// show the inclined plane
+	showIncPlane();
 
 	// show the cube, the rendering order matters when blending is enable
 	glEnable(GL_LIGHTING);
@@ -339,10 +376,11 @@ int main(int argc, char** argv)
 	readWorld(argv[1], &jello);
 
 	// load textureIndices image
-	stoneWallTexture.data = stbi_load("texture/stone-wall.jpg", &stoneWallTexture.textureWidth, &stoneWallTexture.textureHeight, nullptr, 3);
-	grassFloorTexture.data = stbi_load("texture/1.png", &grassFloorTexture.textureWidth, &grassFloorTexture.textureHeight, nullptr, 3);
-	magmaHeadTexture.data = stbi_load("texture/magma-head.jpg", &magmaHeadTexture.textureWidth, &magmaHeadTexture.textureHeight, nullptr, 3);
-	magmaBodyTexture.data = stbi_load("texture/magma-body.jpg", &magmaBodyTexture.textureWidth, &magmaBodyTexture.textureHeight, nullptr, 3);
+	backTexture.data = stbi_load("texture/back.png", &backTexture.textureWidth, &backTexture.textureHeight, nullptr, 3);
+	topTexture.data = stbi_load("texture/top.png", &topTexture.textureWidth, &topTexture.textureHeight, nullptr, 3);
+	downTexture.data = stbi_load("texture/down.png", &downTexture.textureWidth, &downTexture.textureHeight, nullptr, 3);
+	leftTexture.data = stbi_load("texture/left.png", &leftTexture.textureWidth, &leftTexture.textureHeight, nullptr, 3);
+	rightTexture.data = stbi_load("texture/right.png", &rightTexture.textureWidth, &rightTexture.textureHeight, nullptr, 3);
 
 	glutInit(&argc, argv);
 
@@ -383,11 +421,11 @@ int main(int argc, char** argv)
 	glutMainLoop();
 
 	// free image
-	stbi_image_free(stoneWallTexture.data);
-	stbi_image_free(grassFloorTexture.data);
-	stbi_image_free(magmaHeadTexture.data);
-	stbi_image_free(magmaBodyTexture.data);
-
+	stbi_image_free(backTexture.data);
+	stbi_image_free(topTexture.data);
+	stbi_image_free(downTexture.data);
+	stbi_image_free(leftTexture.data);
+	stbi_image_free(rightTexture.data);
 
 	return(0);
 }
