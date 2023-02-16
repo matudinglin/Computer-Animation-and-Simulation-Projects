@@ -203,11 +203,13 @@ void showCube(struct world* jello)
 					counter[i + 1][j + 1]++;
 				}
 
+			// transparent
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			/* the actual rendering */
 			for (j = 1; j <= 7; j++)
 			{
-
 				if (faceFactor > 0)
 					glFrontFace(GL_CCW); // the usual definition of front face
 				else
@@ -222,12 +224,65 @@ void showCube(struct world* jello)
 					glVertex3f(NODE(face, i, j - 1).x, NODE(face, i, j - 1).y, NODE(face, i, j - 1).z);
 				}
 				glEnd();
+
 			}
-
-
+			glDisable(GL_BLEND);
 		}
 	} // end for loop over faces
 	glFrontFace(GL_CCW);
+}
+
+void showIncPlane()
+{
+	// show inclined plane
+	if (jello.incPlanePresent)
+	{
+		Plane incPlane = Plane(jello.a, jello.b, jello.c, jello.d, -1);
+		// find intersections
+		vector<Vector3d> intersections;
+		{
+			auto solveX = [&incPlane](double y, double z)->double {return (-incPlane.d - incPlane.b * y - incPlane.c * z) / incPlane.a; };
+			double axisX[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
+			for (int i = 0; i < 4; ++i)
+			{
+				double x = solveX(axisX[i][0], axisX[i][1]);
+				if (x <= 2 && x >= -2) intersections.emplace_back(x, axisX[i][0], axisX[i][1]);
+			}
+		}
+		{
+			auto solveY = [&incPlane](double x, double z)->double {return (-incPlane.d - incPlane.a * x - incPlane.c * z) / incPlane.b; };
+			double axisY[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
+			for (int i = 0; i < 4; ++i)
+			{
+				double y = solveY(axisY[i][0], axisY[i][1]);
+				if (y <= 2 && y >= -2) intersections.emplace_back(axisY[i][0], y, axisY[i][1]);
+			}
+		}
+		{
+			auto solveZ = [&incPlane](double x, double y)->double {return (-incPlane.d - incPlane.a * x - incPlane.b * y) / incPlane.c; };
+			double axisZ[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
+			for (int i = 0; i < 4; ++i)
+			{
+				double z = solveZ(axisZ[i][0], axisZ[i][1]);
+				if (z <= 2 && z >= -2) intersections.emplace_back(axisZ[i][0], axisZ[i][1], z);
+			}
+		}
+
+		glColor4f(0.5, 0, 0, 0.7);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glDisable(GL_CULL_FACE);
+		glBegin(GL_TRIANGLE_STRIP);
+		for (const Vector3d& inter : intersections)
+		{
+			glVertex3f(inter.x, inter.y, inter.z);
+		}
+		glEnd();
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+	}
 }
 
 void showBoundingBox()
@@ -276,52 +331,7 @@ void showBoundingBox()
 	glEnd();
 	
 	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_CULL_FACE);
-
-	// show inclined plane
-	if (jello.incPlanePresent)
-	{
-		Plane incPlane = Plane(jello.a, jello.b, jello.c, jello.d, -1);
-		// find intersections
-		vector<Vector3d> intersections;
-		{
-			auto solveX = [&incPlane](double y, double z)->double {return (-incPlane.d - incPlane.b * y - incPlane.c * z) / incPlane.a; };
-			double axisX[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
-			for (int i = 0; i < 4; ++i)
-			{
-				double x = solveX(axisX[i][0], axisX[i][1]);
-				if (x <= 2 && x >= -2) intersections.emplace_back(x, axisX[i][0], axisX[i][1]);
-			}
-		}
-		{
-			auto solveY = [&incPlane](double x, double z)->double {return (-incPlane.d - incPlane.a * x - incPlane.c * z) / incPlane.b; };
-			double axisY[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
-			for (int i = 0; i < 4; ++i)
-			{
-				double y = solveY(axisY[i][0], axisY[i][1]);
-				if (y <= 2 && y >= -2) intersections.emplace_back(axisY[i][0], y, axisY[i][1]);
-			}
-		}
-		{
-			auto solveZ = [&incPlane](double x, double y)->double {return (-incPlane.d - incPlane.a * x - incPlane.b * y) / incPlane.c; };
-			double axisZ[4][2] = { {2,2}, {2,-2},{-2,-2},{-2,2} };
-			for (int i = 0; i < 4; ++i)
-			{
-				double z = solveZ(axisZ[i][0], axisZ[i][1]);
-				if (z <= 2 && z >= -2) intersections.emplace_back(axisZ[i][0], axisZ[i][1], z);
-			}
-		}
-
-
-		glDisable(GL_CULL_FACE);
-		glBegin(GL_TRIANGLES);
-		for (const auto& inter : intersections)
-		{
-			glVertex3f(inter.x, inter.y, inter.z);
-		}
-		glEnd();
-		glEnable(GL_CULL_FACE);
-	}
+	
 	return;
 }
 

@@ -225,11 +225,10 @@ void display()
 	GLfloat lP7[] = { -1.999, 1.999, 1.999, 1.0 };
 
 	// jelly material color
-
-	GLfloat mKa[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat mKd[] = { 0.3, 0.3, 0.3, 1.0 };
-	GLfloat mKs[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mKe[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat mKa[] = { 0.1, 0.8, 0.1, 0.7 };
+	GLfloat mKd[] = { 0.1, 0.8, 0.1, 0.7 };
+	GLfloat mKs[] = { 0.1, 0.8, 0.1, 0.7 };
+	GLfloat mKe[] = { 0.1, 0.8, 0.1, 0.7 };
 
 	/* set up lighting */
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, aGa);
@@ -260,17 +259,19 @@ void display()
 	LIGHTSETUP(6);
 	LIGHTSETUP(7);
 
-	// enable lighting
-	glEnable(GL_LIGHTING);
+
 	glEnable(GL_DEPTH_TEST);
 
-	// show the cube
-	showCube(&jello);
-
-	glDisable(GL_LIGHTING);
+	// show the inclined plane
+	showIncPlane();
 
 	// show the bounding box
 	showBoundingBox();
+
+	// show the cube, the rendering order matters when blending is enable
+	glEnable(GL_LIGHTING);
+	showCube(&jello);
+	glDisable(GL_LIGHTING);
 
 	// show FPS
 	system_clock::time_point currentTime = system_clock::now();

@@ -13,4 +13,6 @@ void showCube(struct world * jello);
 
 void showBoundingBox();
 
+void showIncPlane();
+
 #endif
