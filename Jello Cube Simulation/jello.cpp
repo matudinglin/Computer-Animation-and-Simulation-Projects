@@ -262,10 +262,10 @@ void display()
 	GLfloat lP7[] = { -1.999, 1.999, 1.999, 1.0 };
 
 	// jelly material color
-	GLfloat mKa[] = { 0.2, 0.2, 0.2, 0.7 };
-	GLfloat mKd[] = { 0.5, 0.5, 0.5, 0.7 };
-	GLfloat mKs[] = { 1.0, 1.0, 1.0, 0.7 };
-	GLfloat mKe[] = { 0.2, 0.2, 0.2, 0.7 };
+	GLfloat mKa[] = { 0.2, 0.2, 0.2, 0.85 };
+	GLfloat mKd[] = { 0.5, 0.5, 0.5, 0.85 };
+	GLfloat mKs[] = { 1.0, 1.0, 1.0, 0.85 };
+	GLfloat mKe[] = { 0.2, 0.2, 0.2, 0.85 };
 
 	/* set up lighting */
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, aGa);

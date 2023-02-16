@@ -75,7 +75,7 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 	// add force field
 	Vector3d* forceField = jello->forceField;
 	int res = jello->resolution;
-	double forceFieldFactor = 1.0;
+	const double forceFieldFactor = 1.0;
 	if (jello->resolution != 0)
 	{
 		double grid = 4.0 / double(res - 1);
@@ -104,13 +104,14 @@ void computeAcceleration(struct world* jello, struct Vector3d a[8][8][8])
 	}
 	
 	// add mouse force
+	const double mouseForceFactor = 0.05;
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j)
 			for (int k = 0; k < 8; ++k)
 			{
-				a[i][j][k] += mouseForce;
+				a[i][j][k] += mouseForce * mouseForceFactor;
 			}
-
+	mouseForce = Vector3d(0.0, 0.0, 0.0);
 
 	// compute acceleration for every control point 
 	for (int i = 0; i < 8; ++i)
@@ -140,7 +141,6 @@ void Euler(struct world* jello)
 				jello->v[i][j][k].x += jello->dt * a[i][j][k].x;
 				jello->v[i][j][k].y += jello->dt * a[i][j][k].y;
 				jello->v[i][j][k].z += jello->dt * a[i][j][k].z;
-
 			}
 }
 
