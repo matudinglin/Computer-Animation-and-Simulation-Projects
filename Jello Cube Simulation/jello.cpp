@@ -19,8 +19,8 @@
 #include "stb_image.h"
 
 // camera parameters
-double Theta = PI / 6;
-double Phi = PI / 6;
+double Theta = PI / 2.0;  // y-axis
+double Phi = 0; 
 double R = 6;
 
 // mouse control

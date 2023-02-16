@@ -291,16 +291,16 @@ void showBoundingBox()
 
 	glColor4f(1.0, 1.0, 1.0, 0);
 
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	
 	// back
 	glBindTexture(GL_TEXTURE_2D, textureIndices[0]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.0f, -2.0f, -2.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, 2.0f, -2.0f);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, -2.0f, -2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, 2.0f, -2.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
 	glEnd();
 
 	// top
@@ -316,30 +316,31 @@ void showBoundingBox()
 	glBindTexture(GL_TEXTURE_2D, textureIndices[2]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, -2.0f, -2.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, -2.0f, -2.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, -2.0f, 2.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.0f, -2.0f, 2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, -2.0f, 2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, -2.0f, -2.0f);
 	glEnd();
 
 	// left
 	glBindTexture(GL_TEXTURE_2D, textureIndices[3]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0f, 1.0f); glVertex3f(-2.0f, -2.0f, 2.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-2.0f, 2.0f, 2.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
 	glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.0f, -2.0f, -2.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.0f, 2.0f, -2.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-2.0f, 2.0f, 2.0f);
 	glEnd();
 
 	// right
 	glBindTexture(GL_TEXTURE_2D, textureIndices[4]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3f(2.0f, -2.0f, -2.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.0f, 2.0f, -2.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, 2.0f, 2.0f);
 	glTexCoord2f(1.0f, 0.0f); glVertex3f(2.0f, -2.0f, 2.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(2.0f, 2.0f, 2.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(2.0f, 2.0f, -2.0f);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_CULL_FACE);
 	return;
 }
 
