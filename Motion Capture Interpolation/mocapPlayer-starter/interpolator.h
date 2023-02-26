@@ -45,12 +45,14 @@ protected:
 
   // conversion routines
   // angles are given in degrees; assume XYZ Euler angle order
+  double Angle2Radian(double angle);
   void Rotation2Euler(double R[9], double angles[3]);
   void Euler2Rotation(double angles[3], double R[9]);
   void Euler2Quaternion(double angles[3], Quaternion<double> & q); 
   void Quaternion2Euler(Quaternion<double> & q, double angles[3]); 
 
-  // quaternion interpolation
+  // interpolation
+  vector Lerp(double t, vector vStart, vector vEnd);
   Quaternion<double> Slerp(double t, Quaternion<double> & qStart, Quaternion<double> & qEnd);
   Quaternion<double> Double(Quaternion<double> p, Quaternion<double> q);
 
