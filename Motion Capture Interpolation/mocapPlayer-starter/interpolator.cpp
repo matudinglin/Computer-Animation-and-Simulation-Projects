@@ -5,6 +5,7 @@
 #include "motion.h"
 #include "interpolator.h"
 #include "types.h"
+#include <vector>
 
 Interpolator::Interpolator()
 {
@@ -185,41 +186,89 @@ void Interpolator::LinearInterpolationEuler(Motion* pInputMotion, Motion* pOutpu
 void Interpolator::BezierInterpolationEuler(Motion* pInputMotion, Motion* pOutputMotion, int N)
 {
 	int inputLength = pInputMotion->GetNumFrames();
-
-	int startKeyframe = 0;
-	while (startKeyframe + N + 1 < inputLength)
+	
+	int q1Keyframe = 0;
+	while (q1Keyframe + N + 1 < inputLength)
 	{
-		int endKeyframe = startKeyframe + N + 1;
+		// original keyframe
+		int q0Keyframe = q1Keyframe - N - 1;
+		int q2Keyframe = q1Keyframe + N + 1;
+		int q3Keyframe = q2Keyframe + N + 1;
 
-		Posture* startPosture = pInputMotion->GetPosture(startKeyframe);
-		Posture* endPosture = pInputMotion->GetPosture(endKeyframe);
+		// original posture
+		Posture* q0;
+		Posture* q1 = pInputMotion->GetPosture(q1Keyframe);
+		Posture* q2 = pInputMotion->GetPosture(q2Keyframe);
+		Posture* q3;
 
 		// copy start and end keyframe
-		pOutputMotion->SetPosture(startKeyframe, *startPosture);
-		pOutputMotion->SetPosture(endKeyframe, *endPosture);
+		pOutputMotion->SetPosture(q1Keyframe, *q1);
+		pOutputMotion->SetPosture(q2Keyframe, *q2);
 
-		// interpolate in between
-		for (int frame = 1; frame <= N; frame++)
+		// special cases
+		if (q1Keyframe == 0)
+		{
+			q0 = q1;
+			q3 = pInputMotion->GetPosture(q3Keyframe);
+		}
+		else if (q2Keyframe + N + 1 >= inputLength)
+		{
+			q3 = q2;
+			q0 = pInputMotion->GetPosture(q0Keyframe);
+		}
+		else
+		{
+			q0 = pInputMotion->GetPosture(q0Keyframe);
+			q3 = pInputMotion->GetPosture(q3Keyframe);
+		}
+
+		// prepare a1 and b2 for interpolating
+		Posture a1, b2;
+		{
+			vector _a1;
+			// compute a1
+			_a1 = Lerp(0.5, Lerp(2, q0->root_pos, q1->root_pos), q2->root_pos);
+			a1.root_pos = Lerp(1.0 / 3, q1->root_pos, _a1);
+			for (int bone = 0; bone < MAX_BONES_IN_ASF_FILE; ++bone)
+			{
+				_a1 = Lerp(0.5, Lerp(2, q0->bone_rotation[bone], q1->bone_rotation[bone]), q2->bone_rotation[bone]);
+				a1.bone_rotation[bone] = Lerp(1.0 / 3, q1->bone_rotation[bone], _a1);
+			}
+
+			// compute b2
+			_a1 = Lerp(0.5, Lerp(2, q1->root_pos, q2->root_pos), q3->root_pos);
+			b2.root_pos = Lerp(-1.0 / 3, q2->root_pos, _a1);
+			for (int bone = 0; bone < MAX_BONES_IN_ASF_FILE; ++bone)
+			{
+				_a1 = Lerp(0.5, Lerp(2, q1->bone_rotation[bone], q2->bone_rotation[bone]), q3->bone_rotation[bone]);
+				b2.bone_rotation[bone] = Lerp(-1.0 / 3, q2->bone_rotation[bone], _a1);
+			}
+		}
+
+		// interpolate between q1, a1, b2, q2
+		for (int frame = 1; frame <= N; ++frame)
 		{
 			Posture interpolatedPosture;
 			double t = 1.0 * frame / (N + 1);
 
 			// interpolate root position
-			interpolatedPosture.root_pos = startPosture->root_pos * (1 - t) + endPosture->root_pos * t;
+			interpolatedPosture.root_pos = DeCasteljauEuler(t, q1->root_pos, a1.root_pos, b2.root_pos, q2->root_pos);
 
-			// interpolate bone rotations
-			for (int bone = 0; bone < MAX_BONES_IN_ASF_FILE; bone++)
-				interpolatedPosture.bone_rotation[bone] = startPosture->bone_rotation[bone] * (1 - t) + endPosture->bone_rotation[bone] * t;
+			// interpolate bone rotation
+			for (int bone = 0; bone < MAX_BONES_IN_ASF_FILE; ++bone)
+			{
+				interpolatedPosture.bone_rotation[bone] = DeCasteljauEuler(t, q1->bone_rotation[bone], a1.bone_rotation[bone], b2.bone_rotation[bone], q2->bone_rotation[bone]);
+			}
 
-			pOutputMotion->SetPosture(startKeyframe + frame, interpolatedPosture);
+			pOutputMotion->SetPosture(q1Keyframe + frame, interpolatedPosture);
 		}
 
-		// set to next between
-		startKeyframe = endKeyframe;
+		q1Keyframe = q2Keyframe;
 	}
+	
 
 	// copy original to remain frames 
-	for (int frame = startKeyframe + 1; frame < inputLength; frame++)
+	for (int frame = q1Keyframe + 1; frame < inputLength; frame++)
 		pOutputMotion->SetPosture(frame, *(pInputMotion->GetPosture(frame)));
 
 }
