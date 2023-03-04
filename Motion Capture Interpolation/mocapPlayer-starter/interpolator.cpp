@@ -7,6 +7,8 @@
 #include "types.h"
 #include <vector>
 
+
+
 Interpolator::Interpolator()
 {
 	//Set default interpolation type
@@ -97,8 +99,9 @@ void Interpolator::Euler2Quaternion(double angles[3], Quaternion<double>& q)
 
 void Interpolator::Quaternion2Euler(Quaternion<double>& q, double angles[3])
 {
-	double unitAxis[3];
-	q.GetRotation(angles, unitAxis);
+	double R[9];
+	q.Quaternion2Matrix(R);
+	Rotation2Euler(R, angles);
 }
 
 /// <summary>
@@ -115,19 +118,23 @@ Quaternion<double> Interpolator::Slerp(double t, Quaternion<double>& qStart, Qua
 
 	// if dot < 0, move one quaternion to the other side
 	double dot = qStart.Gets() * qEnd.Gets() + qStart.Getx() * qEnd.Getx() + qStart.Gety() * qEnd.Gety() + qStart.Getz() * qEnd.Getz();
-	if (dot < 0)
+	if (dot < 0.0)
 	{
 		qStart = -1 * qStart;
 		dot = -dot;
 	}
 
-	// clamp
-	if (dot > 1) dot = 1;
-	if (dot < -1) dot = -1;
-	double theta = acos(dot);
+	// get angle
+	double angle = acos(dot);
+
+	// special case
+	const double EPSILON = 2.22507e-308;
+	if (sin(angle) - EPSILON < 0.0) return qStart * (1.0 - t) + qEnd * t;
 
 	// compute
-	result = sin((1 - t) * theta) / sin(theta) * qStart + sin(t * theta) / sin(theta) * qEnd;
+	double factor1 = sin((1 - t) * angle) / sin(angle);
+	double factor2 = sin(t * angle) / sin(angle);
+	result = factor1 * qStart + factor2 * qEnd;
 
 	return result;
 }
@@ -275,7 +282,59 @@ void Interpolator::BezierInterpolationEuler(Motion* pInputMotion, Motion* pOutpu
 
 void Interpolator::LinearInterpolationQuaternion(Motion* pInputMotion, Motion* pOutputMotion, int N)
 {
-	// students should implement this
+	int inputLength = pInputMotion->GetNumFrames();
+
+	int startKeyframe = 0;
+	while (startKeyframe + N + 1 < inputLength)
+	{
+		int endKeyframe = startKeyframe + N + 1;
+
+		Posture* startPosture = pInputMotion->GetPosture(startKeyframe);
+		Posture* endPosture = pInputMotion->GetPosture(endKeyframe);
+
+		// copy start and end keyframe
+		pOutputMotion->SetPosture(startKeyframe, *startPosture);
+		pOutputMotion->SetPosture(endKeyframe, *endPosture);
+
+		// interpolate in between
+		for (int frame = 1; frame <= N; frame++)
+		{
+			Posture interpolatedPosture;
+			double t = 1.0 * frame / (N + 1);
+
+			// interpolate root position
+			interpolatedPosture.root_pos = startPosture->root_pos * (1 - t) + endPosture->root_pos * t;
+
+			// interpolate bone rotations
+			for (int bone = 0; bone < MAX_BONES_IN_ASF_FILE; bone++)
+			{
+				double interpolatedAngle[3], startAngle[3], endAngle[3];
+				Quaternion<double> interpolatedQuaternion, startQuaternion, endQuaternion;
+
+				startPosture->bone_rotation[bone].getValue(startAngle);
+				endPosture->bone_rotation[bone].getValue(endAngle);
+
+				// convert euler to quaternion
+				Euler2Quaternion(startAngle, startQuaternion);
+				Euler2Quaternion(endAngle, endQuaternion);
+
+				// interpolating
+				interpolatedQuaternion = Slerp(t, startQuaternion, endQuaternion);
+
+				// convert quaternion back to euler
+				Quaternion2Euler(interpolatedQuaternion, interpolatedAngle);
+
+				interpolatedPosture.bone_rotation[bone] = interpolatedAngle;
+			}
+				
+			pOutputMotion->SetPosture(startKeyframe + frame, interpolatedPosture);
+		}
+
+		startKeyframe = endKeyframe;
+	}
+
+	for (int frame = startKeyframe + 1; frame < inputLength; frame++)
+		pOutputMotion->SetPosture(frame, *(pInputMotion->GetPosture(frame)));
 }
 
 void Interpolator::BezierInterpolationQuaternion(Motion* pInputMotion, Motion* pOutputMotion, int N)
