@@ -112,6 +112,22 @@ int main(int argc, char** argv)
 	int forceAllJointsBe3DOF = 1;
 	pOutputMotion->writeAMCfile(outputMotionCaptureFile, 0.06, forceAllJointsBe3DOF);
 
+
+	//// write data to txt file
+	//std::ofstream inputFile, outputFile;
+	//inputFile.open("../../../Report/Graphs/input-root-Z-200-500-40.txt");
+	//outputFile.open("../../../Report/Graphs/BezierQuaternion-root-Z-200-500-40.txt");
+	//int boneIdx = 0;
+
+	//for (int f = 200; f <= 500; ++f)
+	//{
+	//	inputFile << f << "," << pInputMotion->GetPosture(f)->bone_rotation[boneIdx].z() << "\n";
+	//	outputFile << f << "," << pOutputMotion->GetPosture(f)->bone_rotation[boneIdx].z() << "\n";
+	//}
+
+	//inputFile.close();
+	//outputFile.close();
+
 	return 0;
 }
 
