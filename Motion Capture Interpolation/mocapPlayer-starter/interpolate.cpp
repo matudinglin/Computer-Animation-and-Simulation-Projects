@@ -10,6 +10,7 @@
 #include <fstream>
 #include "interpolator.h"
 #include "motion.h"
+#include <chrono>
 
 int main(int argc, char** argv)
 {
@@ -100,7 +101,15 @@ int main(int argc, char** argv)
 
 	printf("Interpolating...\n");
 	Motion* pOutputMotion; // interpolated motion (output)
+
+	// interpolate
+	auto start = std::chrono::high_resolution_clock::now();
 	interpolator.Interpolate(pInputMotion, &pOutputMotion, N);
+	auto finish = std::chrono::high_resolution_clock::now();
+
+	// get  computation time
+	std::cout << "Interpolate took: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
+
 	if (pOutputMotion == NULL)
 	{
 		printf("Error: interpolation failed. No output generated.\n");
