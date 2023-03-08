@@ -19,12 +19,7 @@ Keywords: Motion Capture Interpolation, Quaternion, Bezier
 - Findings and observations.
 
 ## Extra Credits Check List
-- Make renderer prettier.
-- FPS counter in Command Prompt.
 - Analyze the computation time of the different interpolation techniques.
-- Add texture to the ground.
-- Background music.
-
 
 # Graphs Anlysis
 For each of these graphs, the X axis should be the frame number, and Y axis the angle in degrees. 
