@@ -20,7 +20,9 @@ Keywords: Motion Capture Interpolation, Quaternion, Bezier
 
 ## Extra Credits Check List
 - Analyze the computation time of the different interpolation techniques.
+  - #Computation time Analysis
 - Add two rendering parameter buttons, can control joint radius and bone radius.
+  - #Showcase or ./Report/radiusButton.mp4
 
 # Graphs Anlysis
 For each of these graphs, the X axis should be the frame number, and Y axis the angle in degrees. 
