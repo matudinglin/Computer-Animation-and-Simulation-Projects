@@ -712,6 +712,19 @@ void rz_callback(Fl_Value_Input* obj, void*)
 	glwindow->redraw();
 }
 
+// Render Parameters
+void jointRadius_callback(Fl_Value_Input* obj, void*)
+{
+	displayer.jointRadius = jointRadius_input->value();
+	glwindow->redraw();
+}
+
+void boneRadius_callback(Fl_Value_Input* obj, void*)
+{
+	displayer.boneRadius = boneRadius_input->value();
+	glwindow->redraw();
+}
+
 void aboutPlayer_callback(Fl_Button* button, void*)
 {
 	fl_message_title("About ASF/AMC Motion Capture Player");

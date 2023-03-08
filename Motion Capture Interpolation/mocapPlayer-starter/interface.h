@@ -88,6 +88,12 @@ extern void ry_callback(Fl_Value_Input*, void *);
 extern Fl_Value_Input * rz_input;
 extern void rz_callback(Fl_Value_Input *, void *);
 
+extern Fl_Value_Input* jointRadius_input;
+extern void jointRadius_callback(Fl_Value_Input*, void*);
+
+extern Fl_Value_Input* boneRadius_input;
+extern void boneRadius_callback(Fl_Value_Input*, void*);
+
 Fl_Window * make_window();
 
 #endif

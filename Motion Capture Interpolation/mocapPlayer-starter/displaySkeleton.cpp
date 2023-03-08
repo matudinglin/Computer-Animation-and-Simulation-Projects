@@ -88,8 +88,6 @@ void DisplaySkeleton::SetDisplayList(int skeletonID, Bone *bone, GLuint *pBoneLi
   float boneDiffuse[4] = {diffuseFskeleton * boneColor[0], diffuseFskeleton * boneColor[1], diffuseFskeleton * boneColor[2], 1.0};
   float boneSpecular[4] = {specularFskeleton * boneColor[0], specularFskeleton * boneColor[1], specularFskeleton * boneColor[2], 1.0};
 
-  double jointRadius = 0.10;
-  double boneRadius = 0.10;
   double sizeDifferenceJointAndBone = 0.05;
 
   for(int j=0;j<numbones;j++)

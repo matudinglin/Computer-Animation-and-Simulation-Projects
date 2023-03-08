@@ -20,6 +20,7 @@ Keywords: Motion Capture Interpolation, Quaternion, Bezier
 
 ## Extra Credits Check List
 - Analyze the computation time of the different interpolation techniques.
+- Add two rendering parameter buttons, can control joint radius and bone radius.
 
 # Graphs Anlysis
 For each of these graphs, the X axis should be the frame number, and Y axis the angle in degrees. 
@@ -74,4 +75,8 @@ The table below compare the computation time between four interpolation methods.
 
 In summary, Bezier Euler is more time consuming than Linear methods, because it need more computation using De Casteljau algorithm. Quaternion is more time consuming than Euler methods, because it need to convert Euler angles to Quaternion, after compute, then convert it back to Euler angles. Although Euler has disadvantages, it is more intuitive, and easy to represent.
 
+# Showcase
 
+1. Change joint and bone radius
+
+![005](./Report/radiusButton.gif)

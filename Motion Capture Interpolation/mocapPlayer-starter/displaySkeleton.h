@@ -32,6 +32,10 @@ public:
   DisplaySkeleton();
   ~DisplaySkeleton();
 
+  // Render Parameters
+  double jointRadius = 0.10;
+  double boneRadius = 0.10;
+
   //set skeleton for display
   void LoadSkeleton(Skeleton * pSkeleton);
   //set motion for display
