@@ -48,6 +48,7 @@ Fl_Value_Input* rz_input = (Fl_Value_Input*)0;
 // Render Parameters
 Fl_Value_Input* jointRadius_input = (Fl_Value_Input*)0;
 Fl_Value_Input* boneRadius_input = (Fl_Value_Input*)0;
+Fl_Light_Button* textureGround_button = (Fl_Light_Button*)0;
 
 Fl_Window* make_window()
 {
@@ -217,6 +218,12 @@ Fl_Window* make_window()
 		{
 			Fl_Light_Button* o = worldAxes_button = new Fl_Light_Button(650, 460, 85, 25, "Axes");
 			o->callback((Fl_Callback*)renderWorldAxes_callback, (void*)(0));
+			o->align(FL_ALIGN_INSIDE);
+		}
+
+		{
+			Fl_Light_Button* o = textureGround_button = new Fl_Light_Button(650, 490, 85, 25, "Texture");
+			o->callback((Fl_Callback*)textureGround_callback, (void*)(0));
 			o->align(FL_ALIGN_INSIDE);
 		}
 

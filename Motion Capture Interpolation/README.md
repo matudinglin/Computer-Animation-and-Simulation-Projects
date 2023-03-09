@@ -25,6 +25,8 @@ Keywords: Motion Capture Interpolation, Quaternion, Bezier
   - #Showcase or ./Report/radiusButton.mp4
 - FPS counter in Command Prompt.
   - #Showcase or ./Report/FrameRateDisplay.png
+- Add one texture ground button, can switch between original and texture ground.
+  - #Showcase or ./Report/textureGround.mp4
 # Graphs Anlysis
 For each of these graphs, the X axis should be the frame number, and Y axis the angle in degrees. 
 
@@ -80,7 +82,7 @@ In summary, Bezier Euler is more time consuming than Linear methods, because it 
 
 # Showcase
 
-1. Bezier Quaternion 
+1. Bezier quaternion 
 
 ![005](./Report/BezierQuaternion.gif)
 
@@ -91,3 +93,7 @@ In summary, Bezier Euler is more time consuming than Linear methods, because it 
 3. Frame rate display
   
 ![007](./Report/FrameRateDisplay.png)
+
+4. Texture ground
+
+![008](./Report/textureGround.gif)

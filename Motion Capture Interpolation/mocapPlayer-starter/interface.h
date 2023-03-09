@@ -49,9 +49,11 @@ extern void fslider_callback(Fl_Value_Slider * , long);
 extern Fl_Light_Button * groundPlane_button;
 extern void renderGroundPlane_callback(Fl_Light_Button *, long);
 
-
 extern Fl_Light_Button * worldAxes_button;
 extern void renderWorldAxes_callback(Fl_Light_Button *, long);
+
+extern Fl_Light_Button* textureGround_button;
+extern void textureGround_callback(Fl_Light_Button*, long);
 
 extern Fl_Light_Button * fog_button;
 extern void useFog_callback(Fl_Light_Button *, long);

@@ -32,6 +32,10 @@ Revision 3 - Jernej Barbic and Yili Zhao, Feb, 2012
 #include "displaySkeleton.h"   
 #include "performanceCounter.h"
 
+#include <stdint.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 enum SwitchStatus { OFF, ON };
 
 DisplaySkeleton displayer;
@@ -62,6 +66,16 @@ char lastMotionFilename[FILENAME_MAX];
 std::chrono::system_clock::time_point lastTime = std::chrono::system_clock::now();
 int frames = 0;
 
+// texture
+struct TextureImage
+{
+	int textureWidth, textureHeight;
+	unsigned char* data;
+};
+GLuint textureIndices[1];
+TextureImage groundTexture;
+
+
 enum SaveScreenToFileMode
 {
 	SAVE_DISABLED, SAVE_ONCE, SAVE_CONTINUOUS
@@ -79,6 +93,9 @@ double fogEnd = 12.0;
 double fogDensity = 0.1;
 
 SwitchStatus renderWorldAxes = ON;
+
+SwitchStatus textureGround = OFF;
+
 
 const double standardFPS = 120.0;
 double expectedFPS = standardFPS;
@@ -137,35 +154,74 @@ void RenderGroundPlane(double groundPlaneSize, double groundPlaneHeight, double 
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0, 1.0);
 
-	float planeAmbient[4] = { (float)(ambientFskeleton * rPlane), (float)(ambientFskeleton * gPlane), (float)(ambientFskeleton * bPlane), 1.0f };
-	float planeDiffuse[4] = { (float)(diffuseFskeleton * rPlane), (float)(diffuseFskeleton * gPlane), (float)(diffuseFskeleton * bPlane), 1.0f };
-	float planeSpecular[4] = { (float)(specularFskeleton * rPlane), (float)(specularFskeleton * gPlane), (float)(specularFskeleton * bPlane), 1.0f };
-	float planeShininess = (float)shininess;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, planeAmbient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, planeDiffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, planeSpecular);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, planeShininess);
-	glNormal3f(0, 1, 0);
-	const int planeResolution = 100;
-	double planeIncrement = groundPlaneSize / planeResolution;
-	for (int i = 0; i < planeResolution; i++)
-		for (int j = 0; j < planeResolution; j++)
-		{
-			float planeAmbientAct[4] = { (float)(ambientFskeleton * rPlane), (float)(ambientFskeleton * gPlane), (float)(ambientFskeleton * bPlane), 1.0f };
-			float factor = (((i + j) % 2) == 0) ? 0.5f : 1.0f;
-			planeAmbientAct[0] *= factor;
-			planeAmbientAct[1] *= factor;
-			planeAmbientAct[2] *= factor;
-			planeAmbientAct[3] *= factor;
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, planeAmbientAct);
-			glBegin(GL_QUADS);
-			glVertex3f((float)(-groundPlaneSize / 2 + i * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + j * planeIncrement));
-			glVertex3f((float)(-groundPlaneSize / 2 + i * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + (j + 1) * planeIncrement));
-			glVertex3f((float)(-groundPlaneSize / 2 + (i + 1) * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + (j + 1) * planeIncrement));
-			glVertex3f((float)(-groundPlaneSize / 2 + (i + 1) * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + j * planeIncrement));
-			glEnd();
-		}
+	if (textureGround == OFF)
+	{
+		float planeAmbient[4] = { (float)(ambientFskeleton * rPlane), (float)(ambientFskeleton * gPlane), (float)(ambientFskeleton * bPlane), 1.0f };
+		float planeDiffuse[4] = { (float)(diffuseFskeleton * rPlane), (float)(diffuseFskeleton * gPlane), (float)(diffuseFskeleton * bPlane), 1.0f };
+		float planeSpecular[4] = { (float)(specularFskeleton * rPlane), (float)(specularFskeleton * gPlane), (float)(specularFskeleton * bPlane), 1.0f };
+		float planeShininess = (float)shininess;
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, planeAmbient);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, planeDiffuse);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, planeSpecular);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, planeShininess);
+		glNormal3f(0, 1, 0);
+		const int planeResolution = 100;
+		double planeIncrement = groundPlaneSize / planeResolution;
+		for (int i = 0; i < planeResolution; i++)
+			for (int j = 0; j < planeResolution; j++)
+			{
+				float planeAmbientAct[4] = { (float)(ambientFskeleton * rPlane), (float)(ambientFskeleton * gPlane), (float)(ambientFskeleton * bPlane), 1.0f };
+				float factor = (((i + j) % 2) == 0) ? 0.5f : 1.0f;
+				planeAmbientAct[0] *= factor;
+				planeAmbientAct[1] *= factor;
+				planeAmbientAct[2] *= factor;
+				planeAmbientAct[3] *= factor;
+				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, planeAmbientAct);
+				glBegin(GL_QUADS);
+				glVertex3f((float)(-groundPlaneSize / 2 + i * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + j * planeIncrement));
+				glVertex3f((float)(-groundPlaneSize / 2 + i * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + (j + 1) * planeIncrement));
+				glVertex3f((float)(-groundPlaneSize / 2 + (i + 1) * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + (j + 1) * planeIncrement));
+				glVertex3f((float)(-groundPlaneSize / 2 + (i + 1) * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + j * planeIncrement));
+				glEnd();
+			}
+	}
+	else
+	{
+		const int planeResolution = 100;
+		double planeIncrement = groundPlaneSize / planeResolution;
+		glDisable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, textureIndices[0]);
+		glColor3f(1.0, 1.0, 1.0);
+		for (int i = 0; i < planeResolution; i++)
+			for (int j = 0; j < planeResolution; j++)
+			{
+				glBegin(GL_QUADS);
+				glTexCoord2f(0.0f, 1.0f); glVertex3f((float)(-groundPlaneSize / 2 + i * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + j * planeIncrement));
+				glTexCoord2f(1.0f, 1.0f); glVertex3f((float)(-groundPlaneSize / 2 + i * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + (j + 1) * planeIncrement));
+				glTexCoord2f(1.0f, 0.0f); glVertex3f((float)(-groundPlaneSize / 2 + (i + 1) * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + (j + 1) * planeIncrement));
+				glTexCoord2f(0.0f, 0.0f); glVertex3f((float)(-groundPlaneSize / 2 + (i + 1) * planeIncrement), (float)groundPlaneHeight, (float)(-groundPlaneSize / 2 + j * planeIncrement));
+				glEnd();
+			}
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_LIGHTING);
+	}
+
 	glDisable(GL_POLYGON_OFFSET_FILL);
+}
+
+void LoadTexture()
+{
+	glGenTextures(1, textureIndices);
+
+	glBindTexture(GL_TEXTURE_2D, textureIndices[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, groundTexture.textureWidth,
+		groundTexture.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+		groundTexture.data);
 }
 
 void cameraView(void)
@@ -211,6 +267,19 @@ void Redisplay()
 
 	if (groundPlane == ON)
 	{
+		double groundPlaneHeight = 0.0;
+		double groundPlaneSize = 200.0;
+		double groundPlaneR = 0.81;
+		double groundPlaneG = 0.81;
+		double groundPlaneB = 0.55;
+		double groundPlaneAmbient = 0.1;
+		double groundPlaneDiffuse = 0.9;
+		double groundPlaneSpecular = 0.1;
+		double groundPlaneShininess = 120.0;
+		glNewList(displayListGround, GL_COMPILE);
+		RenderGroundPlane(groundPlaneSize, groundPlaneHeight, groundPlaneR, groundPlaneG, groundPlaneB, groundPlaneAmbient, groundPlaneDiffuse, groundPlaneSpecular, groundPlaneShininess);
+		glEndList();
+
 		if (useFog == ON)
 		{
 			glEnable(GL_FOG);
@@ -226,7 +295,6 @@ void Redisplay()
 		glEnable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		glCallList(displayListGround);
-
 		glDisable(GL_LIGHTING);
 		glDisable(GL_FOG);
 		glLineWidth(1.0);
@@ -262,6 +330,12 @@ void renderGroundPlane_callback(Fl_Light_Button* obj, long val)
 void useFog_callback(Fl_Light_Button* obj, long val)
 {
 	useFog = (SwitchStatus)fog_button->value();
+	glwindow->redraw();
+}
+
+void textureGround_callback(Fl_Light_Button* obj, long val)
+{
+	textureGround = (SwitchStatus)textureGround_button->value();
 	glwindow->redraw();
 }
 
@@ -807,6 +881,9 @@ void GraphicsInit()
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+	// texture 
+	LoadTexture();
+
 	//&groundPlaneHeight, &groundPlaneLightHeight, &groundPlaneSize, &groundPlaneR, &groundPlaneG, &groundPlaneB, &groundPlaneAmbient, &groundPlaneDiffuse, &groundPlaneSpecular, &groundPlaneShininess;
 	// 0.0,180.0,150.0,r0.81,g0.81,b0.55,a0.1,d0.4,s0.1,sh120.0
 	double groundPlaneHeight = 0.0;
@@ -1013,6 +1090,12 @@ int main(int argc, char** argv)
 		groundPlane = ON;
 		glwindow->redraw();
 	}  // if (argc > 2)
+
+
+	// load texture
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Change to absolute path !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	groundTexture.data = stbi_load("C:/Users/admin/Desktop/CSCI520/Computer-Animation-and-Simulation-Projects/Motion Capture Interpolation/mocapPlayer-starter/texture.jpg", &groundTexture.textureWidth, &groundTexture.textureHeight, nullptr, 3);
+
 	Fl::add_idle(idle);
 	return Fl::run();
 }
