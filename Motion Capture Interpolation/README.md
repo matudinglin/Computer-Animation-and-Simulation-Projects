@@ -13,9 +13,9 @@ Keywords: Motion Capture Interpolation, Quaternion, Bezier
 - Report comparing the four interpolation methods: linear Euler, Bezier Euler, SLERP quaternion, Bezier SLERP quaternion.
   - Four graphs
 - Three videos.
-  - ./Report/Bezier Euler.mp4
-  - ./Report/Bezier quaternion.mp4
-  - ./Report/SLERP quaternion.mp4
+  - ./Report/BezierEuler.mp4
+  - ./Report/BezierQuaternion.mp4
+  - ./Report/SlerpQuaternion.mp4
 - Findings and observations.
 
 ## Extra Credits Check List
@@ -23,7 +23,8 @@ Keywords: Motion Capture Interpolation, Quaternion, Bezier
   - #Computation time Analysis
 - Add two rendering parameter buttons, can control joint radius and bone radius.
   - #Showcase or ./Report/radiusButton.mp4
-
+- FPS counter in Command Prompt.
+  - #Showcase or ./Report/FrameRateDisplay.png
 # Graphs Anlysis
 For each of these graphs, the X axis should be the frame number, and Y axis the angle in degrees. 
 
@@ -79,6 +80,14 @@ In summary, Bezier Euler is more time consuming than Linear methods, because it 
 
 # Showcase
 
-1. Change joint and bone radius
+1. Bezier Quaternion 
 
-![005](./Report/radiusButton.gif)
+![005](./Report/BezierQuaternion.gif)
+
+2. Change joint and bone radius
+
+![006](./Report/radiusButton.gif)
+
+3. Frame rate display
+  
+![007](./Report/FrameRateDisplay.png)

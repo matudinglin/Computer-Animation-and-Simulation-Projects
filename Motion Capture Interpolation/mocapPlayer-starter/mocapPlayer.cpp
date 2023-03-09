@@ -15,6 +15,8 @@ Revision 3 - Jernej Barbic and Yili Zhao, Feb, 2012
 #include <fstream>
 #include <cassert>
 #include <cmath>
+#include <chrono>
+#include <iostream>
 
 #include <FL/gl.h>
 #include <FL/glut.H>  // GLUT for use with FLTK
@@ -55,6 +57,10 @@ int lastSkeleton = -1;
 int lastMotion = -1;
 
 char lastMotionFilename[FILENAME_MAX];
+
+// FPS
+std::chrono::system_clock::time_point lastTime = std::chrono::system_clock::now();
+int frames = 0;
 
 enum SaveScreenToFileMode
 {
@@ -911,6 +917,17 @@ void Player_Gl_Window::draw()
 
 	// Redisplay the screen then put the proper buffer on the screen.
 	Redisplay();
+	
+	// show FPS
+	std::chrono::system_clock::time_point currentTime = std::chrono::system_clock::now();
+	frames++;
+	std::chrono::duration<double> deltaTime = currentTime - lastTime;
+	if (deltaTime.count() >= 1.0)
+	{
+		std::cout << "FPS:" << int(double(frames) / deltaTime.count()) << std::endl;
+		frames = 0;
+		lastTime = std::chrono::system_clock::now();
+	}
 }
 
 int main(int argc, char** argv)
