@@ -73,14 +73,55 @@ Skinning::Skinning(int numMeshVertices, const double* restMeshVertexPositions,
 
 void Skinning::applySkinning(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const
 {
-	// Students should implement this
-
 	// The following below is just a dummy implementation.
-	for (int i = 0; i < numMeshVertices; i++)
+	//for (int i = 0; i < numMeshVertices; i++)
+	//{
+	//	newMeshVertexPositions[3 * i + 0] = restMeshVertexPositions[3 * i + 0];
+	//	newMeshVertexPositions[3 * i + 1] = restMeshVertexPositions[3 * i + 1];
+	//	newMeshVertexPositions[3 * i + 2] = restMeshVertexPositions[3 * i + 2];
+	//}
+
+	LBS(jointSkinTransforms, newMeshVertexPositions);
+
+}
+
+void Skinning::LBS(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const
+{
+	for (int i = 0; i < numMeshVertices; ++i)
 	{
-		newMeshVertexPositions[3 * i + 0] = restMeshVertexPositions[3 * i + 0];
-		newMeshVertexPositions[3 * i + 1] = restMeshVertexPositions[3 * i + 1];
-		newMeshVertexPositions[3 * i + 2] = restMeshVertexPositions[3 * i + 2];
+		Vec4d restMeshVertexPosition(restMeshVertexPositions[3 * i + 0], restMeshVertexPositions[3 * i + 1], restMeshVertexPositions[3 * i + 2], 1.0);
+		Vec4d newMeshVertexPos(0.0, 0.0, 0.0, 0.0);
+		// compute LBS positions
+		for (int j = 0; j < numJointsInfluencingEachVertex; ++j)
+		{
+			int vertexIdx = i * numJointsInfluencingEachVertex + j;
+			newMeshVertexPos += meshSkinningWeights[vertexIdx] * jointSkinTransforms[meshSkinningJoints[vertexIdx]] * restMeshVertexPosition;
+		}
+		// set results
+		newMeshVertexPositions[3 * i + 0] = newMeshVertexPos[0];
+		newMeshVertexPositions[3 * i + 1] = newMeshVertexPos[1];
+		newMeshVertexPositions[3 * i + 2] = newMeshVertexPos[2];
 	}
 }
+
+void Skinning::DQS(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const
+{
+	for (int i = 0; i < numMeshVertices; ++i)
+	{
+		Vec4d restMeshVertexPosition(restMeshVertexPositions[3 * i + 0], restMeshVertexPositions[3 * i + 1], restMeshVertexPositions[3 * i + 2], 1.0);
+		Vec4d newMeshVertexPos(0.0, 0.0, 0.0, 0.0);
+		// compute LBS positions
+		for (int j = 0; j < numJointsInfluencingEachVertex; ++j)
+		{
+			int vertexIdx = i * numJointsInfluencingEachVertex + j;
+			newMeshVertexPos += meshSkinningWeights[vertexIdx] * jointSkinTransforms[meshSkinningJoints[vertexIdx]] * restMeshVertexPosition;
+		}
+		// set results
+		newMeshVertexPositions[3 * i + 0] = newMeshVertexPos[0];
+		newMeshVertexPositions[3 * i + 1] = newMeshVertexPos[1];
+		newMeshVertexPositions[3 * i + 2] = newMeshVertexPos[2];
+	}
+}
+
+
 
