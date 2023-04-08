@@ -205,23 +205,35 @@ void FK::computeLocalAndGlobalTransforms(
 	const std::vector<int> jointParents, const vector<int>& jointUpdateOrder,
 	vector<RigidTransform4d>& localTransforms, vector<RigidTransform4d>& globalTransforms)
 {
-	// Students should implement this.
 	// First, compute the localTransform for each joint, using eulerAngles and jointOrientationEulerAngles,
 	// and the "euler2Rotation" function.
+	for (int i = 0; i < localTransforms.size(); ++i)
+	{
+		Mat3d globalR, parentR, localR;
+		euler2Rotation(eulerAngles[i].data(), localR.data(), rotateOrders[i]);
+		euler2Rotation(jointOrientationEulerAngles[i].data(), parentR.data(), rotateOrders[i]);
+		globalR = parentR * localR; 
+		localTransforms[i] = RigidTransform4d(globalR, translations[i]);
+	}
+	
 	// Then, recursively compute the globalTransforms, from the root to the leaves of the hierarchy.
 	// Use the jointParents and jointUpdateOrder arrays to do so.
 	// Also useful are the Mat3d and RigidTransform4d classes defined in the Vega folder.
-
-	// The following is just a dummy implementation that should be replaced.
-	double identity[16] = {
-	  1, 0, 0, 0,
-	  0, 1, 0, 0,
-	  0, 0, 1, 0,
-	  0, 0, 0, 1 };
-	for (int i = 0; i < localTransforms.size(); i++)
+	for (int i = 0; i < jointUpdateOrder.size(); ++i)
 	{
-		localTransforms[i] = RigidTransform4d(identity);
-		globalTransforms[i] = RigidTransform4d(identity);
+		int childIdx, parentIdx;
+		childIdx = jointUpdateOrder[i];
+		parentIdx = jointParents[childIdx];
+
+		// the globalTransform of the root joint equals its localTransform.
+		if (parentIdx == -1)
+		{
+			globalTransforms[childIdx] = RigidTransform4d(localTransforms[childIdx]);
+		}
+		else
+		{
+			globalTransforms[childIdx] = RigidTransform4d(globalTransforms[parentIdx] * localTransforms[childIdx]);
+		}
 	}
 }
 
@@ -232,17 +244,9 @@ void FK::computeSkinningTransforms(
 	const vector<RigidTransform4d>& invRestGlobalTransforms,
 	vector<RigidTransform4d>& skinTransforms)
 {
-	// Students should implement this.
-
-	// The following is just a dummy implementation that should be replaced.
-	double identity[16] = {
-	  1, 0, 0, 0,
-	  0, 1, 0, 0,
-	  0, 0, 1, 0,
-	  0, 0, 0, 1 };
-	for (int i = 0; i < skinTransforms.size(); i++)
+	for (int i = 0; i < globalTransforms.size(); ++i)
 	{
-		skinTransforms[i] = RigidTransform4d(identity);
+		skinTransforms[i] = RigidTransform4d(globalTransforms[i] * invRestGlobalTransforms[i]);
 	}
 }
 
