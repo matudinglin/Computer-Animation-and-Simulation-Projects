@@ -209,11 +209,11 @@ void FK::computeLocalAndGlobalTransforms(
 	// and the "euler2Rotation" function.
 	for (int i = 0; i < localTransforms.size(); ++i)
 	{
-		Mat3d globalR, parentR, localR;
-		euler2Rotation(eulerAngles[i].data(), localR.data(), rotateOrders[i]);
-		euler2Rotation(jointOrientationEulerAngles[i].data(), parentR.data(), rotateOrders[i]);
-		globalR = parentR * localR; 
-		localTransforms[i] = RigidTransform4d(globalR, translations[i]);
+		Mat3d xParent, localTransform, xLocal;
+		euler2Rotation(eulerAngles[i].data(), xLocal.data(), rotateOrders[i]);
+		euler2Rotation(jointOrientationEulerAngles[i].data(), localTransform.data(), rotateOrders[i]);
+		xParent = localTransform * xLocal; 
+		localTransforms[i] = RigidTransform4d(xParent, translations[i]);
 	}
 	
 	// Then, recursively compute the globalTransforms, from the root to the leaves of the hierarchy.

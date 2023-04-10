@@ -73,14 +73,6 @@ Skinning::Skinning(int numMeshVertices, const double* restMeshVertexPositions,
 
 void Skinning::applySkinning(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const
 {
-	// The following below is just a dummy implementation.
-	//for (int i = 0; i < numMeshVertices; i++)
-	//{
-	//	newMeshVertexPositions[3 * i + 0] = restMeshVertexPositions[3 * i + 0];
-	//	newMeshVertexPositions[3 * i + 1] = restMeshVertexPositions[3 * i + 1];
-	//	newMeshVertexPositions[3 * i + 2] = restMeshVertexPositions[3 * i + 2];
-	//}
-
 	LBS(jointSkinTransforms, newMeshVertexPositions);
 
 }

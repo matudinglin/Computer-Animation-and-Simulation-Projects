@@ -8,7 +8,7 @@
 // Jernej Barbic and Yijing Li
 
 #include <cfloat>
-
+#include <Eigen/Dense>
 class FK;
 class Vec3d;
 
