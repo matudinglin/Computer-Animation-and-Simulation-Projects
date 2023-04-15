@@ -27,10 +27,10 @@ public:
   void applySkinning(const RigidTransform4d * jointSkinTransforms, double * newMeshVertexPositions) const;
 
   // Linear Blend Skinning
-  void LBS(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const;
+  void applyLBS(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const;
 
   // Dual-Quaternion Skinning
-  void DQS(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const;
+  void applyDQS(const RigidTransform4d* jointSkinTransforms, double* newMeshVertexPositions) const;
 
 protected:
   int numMeshVertices = 0;
