@@ -15,7 +15,7 @@ using namespace std;
 // CSCI 520 Computer Animation and Simulation
 // Jernej Barbic and Yijing Li
 
-enum IKMethods { tikhonovIK, pseudoinverseIK};
+enum IKMethods { tikhonovIK, pseudoinverseIK, transposeIK};
 const IKMethods ikMethods = tikhonovIK;
 
 namespace
@@ -223,7 +223,7 @@ void IK::doIK(const Vec3d* targetHandlePositions, Vec3d* jointEulerAngles)
 	}
 }
 
-
+// See:http://www.cs.cmu.edu/~15464-s13/lectures/lecture6/iksurvey.pdf
 void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd &delta_t)
 {
 	// divide IK process if move handles for a long distance
@@ -239,12 +239,16 @@ void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd 
 		computeIK(J, delta_b, delta_t);
 		delta_t *= 2.0;
 	}
-	// else compute IK using PI or Tikhjonov
+	// else compute IK using:
+	// The pseudoinverse method or
+	// The Jacobian transpose method or
+	// Damped least squares / Tikhonov regularization method
 	else
 	{
 		MatrixXd J_T = J.transpose();
 		MatrixXd I = MatrixXd::Identity(FKInputDim, FKInputDim);
-		const double alpha = 0.01;
+		double alpha = 0.01;
+		VectorXd JJTb = J * J_T * delta_b;
 		switch (ikMethods)
 		{
 		case pseudoinverseIK:
@@ -253,6 +257,9 @@ void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd 
 		case tikhonovIK:
 			delta_t = (J_T * J + alpha * I).ldlt().solve(J_T * delta_b);
 			break;
+		case transposeIK:
+			alpha = delta_b.dot(JJTb) / JJTb.dot(JJTb);
+			delta_t = alpha * J_T * delta_b;
 		default:
 			break;
 		}
