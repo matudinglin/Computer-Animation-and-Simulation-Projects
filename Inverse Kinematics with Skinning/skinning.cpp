@@ -11,7 +11,7 @@ using namespace std;
 // Jernej Barbic and Yijing Li
 
 enum SkinningTypes { LBS, DQS };
-const SkinningTypes skinningTypes = DQS;
+const SkinningTypes skinningTypes = LBS;
 
 Skinning::Skinning(int numMeshVertices, const double* restMeshVertexPositions,
 	const std::string& meshSkinningWeightsFilename)

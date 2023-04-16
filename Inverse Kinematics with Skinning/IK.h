@@ -25,6 +25,7 @@ public:
   // output: the computed joint Euler angles; same meaning as in the FK class
   // Note: eulerAngles is both input and output
   void doIK(const Vec3d * targetHandlePositions, Vec3d * eulerAngles);
+  void computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd &delta_t);
 
   // IK parameters
   int getFKInputDim() const { return FKInputDim; }

@@ -15,6 +15,9 @@ using namespace std;
 // CSCI 520 Computer Animation and Simulation
 // Jernej Barbic and Yijing Li
 
+enum IKMethods { tikhonovIK, pseudoinverseIK};
+const IKMethods ikMethods = tikhonovIK;
+
 namespace
 {
 
@@ -164,6 +167,9 @@ void IK::train_adolc()
 	trace_off(); 
 }
 
+
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 void IK::doIK(const Vec3d* targetHandlePositions, Vec3d* jointEulerAngles)
 {
 	// Students should implement this.
@@ -187,13 +193,13 @@ void IK::doIK(const Vec3d* targetHandlePositions, Vec3d* jointEulerAngles)
 		jacobianMatrixPerRow[r] = &jacobianMatrix[r * FKInputDim];
 	::jacobian(adolc_tagID, FKOutputDim, FKInputDim, jointEulerAngles->data(), jacobianMatrixPerRow.data());
 
-	Eigen::MatrixXd J(FKOutputDim, FKInputDim);
+	MatrixXd J(FKOutputDim, FKInputDim);
 	for (int r = 0; r < FKOutputDim; ++r)
 		for (int c = 0; c < FKInputDim; ++c)
 			J(r, c) = jacobianMatrix[r * FKInputDim + c];
 
 	// delta b
-	Eigen::VectorXd delta_b(FKOutputDim); 
+	VectorXd delta_b(FKOutputDim); 
 	for (int i = 0; i < numIKJoints; ++i)
 	{
 		delta_b[3 * i + 0] = targetHandlePositions[i][0] - newHandlePositions[3 * i + 0];
@@ -202,11 +208,11 @@ void IK::doIK(const Vec3d* targetHandlePositions, Vec3d* jointEulerAngles)
 	}
 
 	// delta angle/theta
-	Eigen::VectorXd delta_t(FKInputDim);
+	VectorXd delta_t(FKInputDim);
 	
-	// solve IK
-	Eigen::MatrixXd J_T = J.transpose();
-	delta_t = J_T * (J * J_T).inverse() * delta_b;
+	// compute IK
+	computeIK(J, delta_b, delta_t);
+
 
 	// update result
 	for (int i = 0; i < numJoints; ++i)
@@ -215,4 +221,41 @@ void IK::doIK(const Vec3d* targetHandlePositions, Vec3d* jointEulerAngles)
 		jointEulerAngles[i][1] += delta_t[3 * i + 1]; 
 		jointEulerAngles[i][2] += delta_t[3 * i + 2]; 
 	}
+}
+
+
+void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd &delta_t)
+{
+	// divide IK process if move handles for a long distance
+	const double moveDistanceLimit = 0.1;
+	bool dividedIK = false;
+	for (int i = 0; i < FKOutputDim; ++i)
+		if (delta_b[i] > moveDistanceLimit) dividedIK = true;
+
+	// if need divide
+	if (dividedIK)
+	{
+		delta_b *= 0.5;
+		computeIK(J, delta_b, delta_t);
+		delta_t *= 2.0;
+	}
+	// else compute IK using PI or Tikhjonov
+	else
+	{
+		MatrixXd J_T = J.transpose();
+		MatrixXd I = MatrixXd::Identity(FKInputDim, FKInputDim);
+		const double alpha = 0.01;
+		switch (ikMethods)
+		{
+		case pseudoinverseIK:
+			delta_t = J_T * (J * J_T).inverse() * delta_b;
+			break;
+		case tikhonovIK:
+			delta_t = (J_T * J + alpha * I).ldlt().solve(J_T * delta_b);
+			break;
+		default:
+			break;
+		}
+	}
+
 }
