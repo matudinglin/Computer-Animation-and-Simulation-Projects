@@ -15,8 +15,8 @@ using namespace std;
 // CSCI 520 Computer Animation and Simulation
 // Jernej Barbic and Yijing Li
 
-enum IKMethods { tikhonovIK, pseudoinverseIK, transposeIK, dlsIK};
-const IKMethods ikMethods = dlsIK;
+enum IKMethods { tikhonovIK, pseudoinverseIK, transposeIK};
+const IKMethods ikMethods = tikhonovIK;
 
 namespace
 {
@@ -242,8 +242,7 @@ void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd 
 	// else compute IK using:
 	// The pseudoinverse method or
 	// The Jacobian transpose method or
-	// Tikhonov regularization method or
-	// Damped least squares method
+	// Tikhonov regularization method
 	else
 	{
 		MatrixXd J_T = J.transpose();
@@ -253,8 +252,6 @@ void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd 
 		// for transpose
 		double alpha2;
 		VectorXd JJTb = J * J_T * delta_b;
-		// for DLS
-		double lambda = 0.01;
 
 		switch (ikMethods)
 		{
@@ -267,8 +264,6 @@ void IK::computeIK(Eigen::MatrixXd J, Eigen::VectorXd &delta_b, Eigen::VectorXd 
 		case transposeIK:
 			alpha2 = delta_b.dot(JJTb) / JJTb.dot(JJTb);
 			delta_t = alpha2 * J_T * delta_b;
-		case dlsIK:
-			delta_t = (J_T * J + lambda * lambda * I).inverse() * J_T * delta_b;
 		default:
 			break;
 		}
